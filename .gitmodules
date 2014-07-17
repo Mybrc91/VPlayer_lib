@@ -7,9 +7,6 @@
 [submodule "FFmpegLibrary/jni/vo-amrwbenc"]
 	path = ffmpeg_build/vo-amrwbenc
 	url = git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/vo-amrwbenc
-[submodule "FFmpegLibrary/jni/x264"]
-	path = ffmpeg_build/x264
-	url = git://git.videolan.org/x264.git
 [submodule "FFmpegLibrary/jni/tropicssl"]
 	path = ffmpeg_build/tropicssl
 	url = https://review.appunite.com/tropicssl.git
@@ -22,3 +19,6 @@
 [submodule "FFmpegLibrary/jni/freetype2"]
 	path = ffmpeg_build/freetype2
 	url = git://git.sv.gnu.org/freetype/freetype2.git
+[submodule "ffmpeg_build/x264"]
+	path = ffmpeg_build/x264
+	url = git://git.videolan.org/x264.git
