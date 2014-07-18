@@ -22,8 +22,8 @@ include $(CLEAR_VARS)
 #
 #           If you comment out FEATURE_NEON, you need to remove System.LoadLibrary
 #           from the java code in FFmpegPlayer.java
-FEATURE_NEON:=
-LIBRARY_PROFILER:=
+FEATURE_NEON:=yes
+#LIBRARY_PROFILER:=yes
 
 # add support for encryption
 MODULE_ENCRYPT:=yes
@@ -39,14 +39,17 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
         FEATURE_NEON:=yes
     endif
 else
-
+    FEATURE_NEON:=
 endif
 
 #if armeabi or armeabi-v7a
 ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),armeabi armeabi-v7a))
-	# add profiler (only arm)
-	#LIBRARY_PROFILER:=yes
-
+    ifdef LIBRARY_PROFILER
+        # add profiler (only arm)
+        LIBRARY_PROFILER:=yes
+	endif
+else
+    LIBRARY_PROFILER:=
 endif
 
 include $(CLEAR_VARS)
