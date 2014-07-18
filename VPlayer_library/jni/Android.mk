@@ -80,8 +80,7 @@ LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/que
                    application/helpers.c application/jni-protocol.c application/blend.c \
                    application/convert.cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
-                    $(LOCAL_PATH)/application \
-                    $(LOCAL_PATH)/../ffmpeg_build/
+                    $(LOCAL_PATH)/application
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt
 
 #if enabled profiler add it
@@ -118,8 +117,7 @@ LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/que
                    application/helpers.c application/jni-protocol.c application/blend.c \
                    application/convert.cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
-                    $(LOCAL_PATH)/application \
-                    $(LOCAL_PATH)/../ffmpeg_build/
+                    $(LOCAL_PATH)/application
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt-neon
 
 #if enabled profiler add it
