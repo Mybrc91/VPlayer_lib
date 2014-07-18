@@ -352,7 +352,7 @@ function build_one {
 #ARCH=arm
 #CPU=armv5
 #OPTIMIZE_CFLAGS="-marm -march=$CPU"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi
+#PREFIX=../../jni/ffmpeg-build/armeabi
 #OUT_LIBRARY=$PREFIX/libffmpeg.so
 #ADDITIONAL_CONFIGURE_FLAG=
 #SONAME=libffmpeg.so
@@ -370,7 +370,7 @@ function build_one {
 #EABIARCH=i686-linux-android
 #ARCH=x86
 #OPTIMIZE_CFLAGS="-m32"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/x86
+#PREFIX=../../jni/ffmpeg-build/x86
 #OUT_LIBRARY=$PREFIX/libffmpeg.so
 #ADDITIONAL_CONFIGURE_FLAG=--disable-asm
 #SONAME=libffmpeg.so
@@ -385,7 +385,7 @@ function build_one {
 #ARCH=arm
 #CPU=armv5
 #OPTIMIZE_CFLAGS="-marm -march=$CPU"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi
+#PREFIX=../../jni/ffmpeg-build/armeabi
 #OUT_LIBRARY=$PREFIX/libffmpeg.so
 #ADDITIONAL_CONFIGURE_FLAG=
 #SONAME=libffmpeg.so
@@ -403,7 +403,7 @@ function build_one {
 #EABIARCH=i686-linux-android
 #ARCH=x86
 #OPTIMIZE_CFLAGS="-m32"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/x86
+#PREFIX=../../jni/ffmpeg-build/x86
 #OUT_LIBRARY=$PREFIX/libffmpeg.so
 #ADDITIONAL_CONFIGURE_FLAG=--disable-asm
 #SONAME=libffmpeg.so
@@ -421,7 +421,7 @@ function build_one {
 #EABIARCH=mipsel-linux-android
 #ARCH=mips
 #OPTIMIZE_CFLAGS="-EL -march=mips32 -mips32 -mhard-float"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/mips
+#PREFIX=../../jni/ffmpeg-build/mips
 #OUT_LIBRARY=$PREFIX/libffmpeg.so
 #ADDITIONAL_CONFIGURE_FLAG="--disable-mips32r2"
 #SONAME=libffmpeg.so
@@ -440,7 +440,7 @@ EABIARCH=arm-linux-androideabi
 ARCH=arm
 CPU=armv7-a
 OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=vfpv3-d16 -marm -march=$CPU "
-PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a
+PREFIX=../../jni/ffmpeg-build/armeabi-v7a
 OUT_LIBRARY=$PREFIX/libffmpeg.so
 ADDITIONAL_CONFIGURE_FLAG=
 SONAME=libffmpeg.so
@@ -459,7 +459,7 @@ build_one
 #ARCH=arm
 #CPU=armv7-a
 #OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=neon -marm -march=$CPU -mtune=cortex-a8 -mthumb -D__thumb__ "
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a-neon
+#PREFIX=../../jni/ffmpeg-build/armeabi-v7a-neon
 #OUT_LIBRARY=../ffmpeg-build/armeabi-v7a/libffmpeg-neon.so
 #ADDITIONAL_CONFIGURE_FLAG=--enable-neon
 #SONAME=libffmpeg-neon.so
