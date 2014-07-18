@@ -34,8 +34,10 @@ MODULE_ENCRYPT:=yes
 
 #if armeabi-v7a
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-	# add neon optimization code (only armeabi-v7a)
-	FEATURE_NEON:=yes
+    ifdef FEATURE_NEON
+        # add neon optimization code (only armeabi-v7a)
+        FEATURE_NEON:=yes
+    endif
 else
 
 endif
