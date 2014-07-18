@@ -2862,27 +2862,35 @@ void jni_player_render_frame_start(JNIEnv *env, jobject thiz) {
 
 }
 
+void jni_player_render_frame_pause(JNIEnv *env, jobject thiz) {
+    struct Player * player = player_get_player_field(env, thiz);
+
+    struct State state = {player: player, env: env};
+
+    LOGI(5, "jni_player_render_frame_stop waiting for mutex");
+    pthread_mutex_lock(&player->mutex_queue);
+    if (player->window == NULL) {
+        LOGE(1,
+                "jni_player_render_frame_stop Window is null this "
+                "mean that you did not call render function");
+        exit(1);
+    }
+    LOGI(5, "jni_player_render_frame_stop releasing window");
+    ANativeWindow_release(player->window);
+    player->window = NULL;
+    pthread_cond_broadcast(&player->cond_queue);
+    pthread_mutex_unlock(&player->mutex_queue);
+}
+
 void jni_player_render_frame_stop(JNIEnv *env, jobject thiz) {
-	struct Player * player = player_get_player_field(env, thiz);
+    struct Player * player = player_get_player_field(env, thiz);
 
-	struct State state = {player: player, env: env};
+    struct State state = {player: player, env: env};
 
-	LOGI(5, "jni_player_render_frame_stop stopping render");
+    LOGI(5, "jni_player_render_frame_stop stopping render");
 
-	player_stop(&state);
+    player_stop(&state);
 
-	LOGI(5, "jni_player_render_frame_stop waiting for mutex");
-	pthread_mutex_lock(&player->mutex_queue);
-	if (player->window == NULL) {
-		LOGE(1,
-				"jni_player_render_frame_stop Window is null this "
-				"mean that you did not call render function");
-		exit(1);
-	}
-	LOGI(5, "jni_player_render_frame_stop releasing window");
-	ANativeWindow_release(player->window);
-	player->window = NULL;
-	pthread_cond_broadcast(&player->cond_queue);
-	pthread_mutex_unlock(&player->mutex_queue);
+    jni_player_render_frame_pause(env, thiz);
 }
 

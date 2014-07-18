@@ -257,6 +257,8 @@ public class FFmpegPlayer {
 
     native void renderFrameStop();
 
+    native void renderFramePause();
+
     private native void seekNative(long positionUs) throws NotPlayingException;
 
     private native long getVideoDurationNative();

@@ -80,7 +80,10 @@ public class FFmpegSurfaceView extends SurfaceView implements FFmpegDisplay,
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        this.mMpegPlayer.renderFrameStop();
+        // This will cause a surface error in logcat but will not crash, ignore it
+        //     queueBuffer: error queuing buffer to SurfaceTexture, -19
+        //     queueBuffer (handle=0x2a5e89f8) failed (No such device)
+        this.mMpegPlayer.renderFramePause();
         mCreated = false;
     }
 
