@@ -8,7 +8,7 @@
 	path = ffmpeg_build/vo-amrwbenc
 	url = git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/vo-amrwbenc
 [submodule "FFmpegLibrary/jni/tropicssl"]
-	path = ffmpeg_build/tropicssl
+	path = FFmpegLibrary/jni/tropicssl
 	url = https://review.appunite.com/tropicssl.git
 [submodule "FFmpegLibrary/jni/libass"]
 	path = ffmpeg_build/libass
