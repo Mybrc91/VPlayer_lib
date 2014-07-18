@@ -17,15 +17,19 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-#presets - do not tuch this
+#
+#   Presets - comment out what you don't need
+#
+#           If you comment out FEATURE_NEON, you need to remove System.LoadLibrary
+#           from the java code in FFmpegPlayer.java
 FEATURE_NEON:=
 LIBRARY_PROFILER:=
-MODULE_ENCRYPT:=
-
-#settings
 
 # add support for encryption
 MODULE_ENCRYPT:=yes
+
+
+
 
 
 #if armeabi-v7a
@@ -43,9 +47,6 @@ ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),armeabi armeabi-v7a))
 
 endif
 
-
-
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := ffmpeg-prebuilt
 LOCAL_SRC_FILES := ffmpeg-build/$(TARGET_ARCH_ABI)/libffmpeg.so
@@ -53,6 +54,8 @@ LOCAL_EXPORT_C_INCLUDES := ffmpeg-build/$(TARGET_ARCH_ABI)/include
 LOCAL_EXPORT_LDLIBS := ffmpeg-build/$(TARGET_ARCH_ABI)/libffmpeg.so
 LOCAL_PRELINK_MODULE := true
 include $(PREBUILT_SHARED_LIBRARY)
+
+#../../ffmpeg_build/ffmpeg
 
 ifdef FEATURE_NEON
 include $(CLEAR_VARS)
@@ -68,8 +71,12 @@ endif
 include $(CLEAR_VARS)
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=false
 LOCAL_MODULE := ffmpeg-jni
-LOCAL_SRC_FILES := ffmpeg-jni.c player.c queue.c helpers.c jni-protocol.c blend.c convert.cpp
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include
+LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/queue.c \
+                   application/helpers.c application/jni-protocol.c application/blend.c \
+                   application/convert.cpp
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
+                    $(LOCAL_PATH)/application \
+                    $(LOCAL_PATH)/../ffmpeg_build/
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt
 
 #if enabled profiler add it
@@ -87,7 +94,7 @@ LOCAL_REQUIRED_MODULES += libyuv_static
 
 ifdef MODULE_ENCRYPT
 LOCAL_CFLAGS += -DMODULE_ENCRYPT
-LOCAL_SRC_FILES += aes-protocol.c
+LOCAL_SRC_FILES += application/aes-protocol.c
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/tropicssl/include
 LOCAL_STATIC_LIBRARIES += tropicssl
 LOCAL_REQUIRED_MODULES += tropicssl
@@ -102,8 +109,12 @@ ifdef FEATURE_NEON
 include $(CLEAR_VARS)
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=false
 LOCAL_MODULE := ffmpeg-jni-neon
-LOCAL_SRC_FILES := ffmpeg-jni.c player.c queue.c helpers.c jni-protocol.c blend.c convert.cpp
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include
+LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/queue.c \
+                   application/helpers.c application/jni-protocol.c application/blend.c \
+                   application/convert.cpp
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
+                    $(LOCAL_PATH)/application \
+                    $(LOCAL_PATH)/../ffmpeg_build/
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt-neon
 
 #if enabled profiler add it
@@ -121,7 +132,7 @@ LOCAL_REQUIRED_MODULES += libyuv_static
 
 ifdef MODULE_ENCRYPT
 LOCAL_CFLAGS += -DMODULE_ENCRYPT
-LOCAL_SRC_FILES += aes-protocol.c
+LOCAL_SRC_FILES += application/aes-protocol.c
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/tropicssl/include
 LOCAL_STATIC_LIBRARIES += tropicssl
 LOCAL_REQUIRED_MODULES += tropicssl
@@ -132,8 +143,8 @@ LOCAL_LDLIBS += -llog -ljnigraphics -lz -lm -g $(LOCAL_PATH)/ffmpeg-build/$(TARG
 include $(BUILD_SHARED_LIBRARY)
 endif
 
-
 #nativetester-jni library
+ifdef FEATURE_NEON
 include $(CLEAR_VARS)
 
 ifdef FEATURE_VFPV3
@@ -146,11 +157,11 @@ endif
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=false
 LOCAL_MODULE := nativetester-jni
-LOCAL_SRC_FILES := nativetester-jni.c nativetester.c
+LOCAL_SRC_FILES := application/nativetester-jni.c application/nativetester.c
 LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_LDLIBS  := -llog
 include $(BUILD_SHARED_LIBRARY)
-
+endif
 
 #includes
 ifdef MODULE_ENCRYPT
