@@ -1,4 +1,5 @@
 VPlayer_library/jni/ffmpeg-build/**
+VPlayer_library/jni/ffmpeg/**
 VPlayer_library/bin/**
 VPlayer_library/local.properties
 VPlayer_library/gen/**
