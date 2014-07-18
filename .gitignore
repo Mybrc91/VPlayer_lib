@@ -20,6 +20,8 @@ FFmpegExample/proguard/**
 FFmpegExample/.settings/**
 FFmpegExample/lint.xml
 
+*~
+
 
 .cproject
 .classpath
