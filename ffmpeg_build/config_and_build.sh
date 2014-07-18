@@ -14,10 +14,12 @@ function addAutomakeOpts() {
     fi
 }
 
+cd ..
 git submodule update --init --recursive
+cd ffmpeg_build
 
 # Because it is svn...
-svn checkout http://libyuv.googlecode.com/svn/trunk/ libyuv
+svn checkout http://libyuv.googlecode.com/svn/trunk/ ../VPlayer_library/jni/libyuv
 
 # configure the environment
 cd freetype2

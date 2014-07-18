@@ -1,26 +1,27 @@
-FFmpegLibrary/jni/ffmpeg-build/**
-FFmpegLibrary/bin/**
-FFmpegLibrary/local.properties
-FFmpegLibrary/gen/**
-FFmpegLibrary/tmp/**
-FFmpegLibrary/obj/**
-FFmpegLibrary/libs/**
-FFmpegLibrary/proguard/**
-FFmpegLibrary/.settings/**
-FFmpegLibrary/jni/.settings/**
-FFmpegLibrary/lint.xml
-FFmpegLibrary/jni/libyuv/**
+VPlayer_library/jni/ffmpeg-build/**
+VPlayer_library/bin/**
+VPlayer_library/local.properties
+VPlayer_library/gen/**
+VPlayer_library/tmp/**
+VPlayer_library/obj/**
+VPlayer_library/libs/**
+VPlayer_library/proguard/**
+VPlayer_library/.settings/**
+VPlayer_library/jni/.settings/**
+VPlayer_library/lint.xml
+VPlayer_library/jni/libyuv/**
 
-FFmpegExample/bin/**
-FFmpegExample/gen/**
-FFmpegExample/tmp/**
-FFmpegExample/obj/**
-FFmpegExample/local.properties
-FFmpegExample/proguard/**
-FFmpegExample/.settings/**
-FFmpegExample/lint.xml
+VPlayer_library/bin/**
+VPlayer_library/gen/**
+VPlayer_library/tmp/**
+VPlayer_library/obj/**
+VPlayer_library/local.properties
+VPlayer_library/proguard/**
+VPlayer_library/.settings/**
+VPlayer_library/lint.xml
 
 *~
+libyuv/
 
 
 .cproject
