@@ -26,61 +26,62 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class FFmpegSurfaceView extends SurfaceView implements FFmpegDisplay,
-		SurfaceHolder.Callback {
+        SurfaceHolder.Callback {
 
-	public static enum ScaleType {
-		CENTER_CROP, CENTER_INSIDE, FIT_XY
-	}
+    public static enum ScaleType {
+        CENTER_CROP, CENTER_INSIDE, FIT_XY
+    }
 
-	private FFmpegPlayer mMpegPlayer = null;
-	private boolean mCreated = false;
+    private FFmpegPlayer mMpegPlayer = null;
+    private boolean mCreated = false;
 
-	public FFmpegSurfaceView(Context context) {
-		this(context, null, 0);
-	}
+    public FFmpegSurfaceView(Context context) {
+        this(context, null, 0);
+    }
 
-	public FFmpegSurfaceView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+    public FFmpegSurfaceView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
-	public FFmpegSurfaceView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+    public FFmpegSurfaceView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
 
-		SurfaceHolder holder = getHolder();
-		holder.setFormat(PixelFormat.RGBA_8888);
-		holder.addCallback(this);
-	}
+        SurfaceHolder holder = getHolder();
+        holder.setFormat(PixelFormat.RGBA_8888);
+        holder.addCallback(this);
+    }
 
-	@Override
-	public void setMpegPlayer(FFmpegPlayer fFmpegPlayer) {
-		if (mMpegPlayer != null)
-			throw new RuntimeException(
-					"setMpegPlayer could not be called twice");
+    @Override
+    public void setMpegPlayer(FFmpegPlayer fFmpegPlayer) {
+        if (mMpegPlayer != null) {
+            throw new RuntimeException(
+                    "setMpegPlayer could not be called twice");
+        }
 
-		this.mMpegPlayer = fFmpegPlayer;
-	}
+        this.mMpegPlayer = fFmpegPlayer;
+    }
 
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-		
-	}
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+            int height) {
 
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		if (mCreated  == true) {
-			surfaceDestroyed(holder);
-		}
+    }
 
-		Surface surface = holder.getSurface();
-		mMpegPlayer.render(surface);
-		mCreated = true;
-	}
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        if (mCreated  == true) {
+            surfaceDestroyed(holder);
+        }
 
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		this.mMpegPlayer.renderFrameStop();
-		mCreated = false;
-	}
+        Surface surface = holder.getSurface();
+        mMpegPlayer.render(surface);
+        mCreated = true;
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        this.mMpegPlayer.renderFrameStop();
+        mCreated = false;
+    }
 
 }
