@@ -7,9 +7,6 @@
 [submodule "FFmpegLibrary/jni/vo-amrwbenc"]
 	path = ffmpeg_build/vo-amrwbenc
 	url = git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/vo-amrwbenc
-[submodule "FFmpegLibrary/jni/tropicssl"]
-	path = FFmpegLibrary/jni/tropicssl
-	url = https://review.appunite.com/tropicssl.git
 [submodule "FFmpegLibrary/jni/libass"]
 	path = ffmpeg_build/libass
 	url = https://code.google.com/p/libass/
@@ -22,3 +19,6 @@
 [submodule "ffmpeg_build/x264"]
 	path = ffmpeg_build/x264
 	url = git://git.videolan.org/x264.git
+[submodule "VPlayer_library/jni/tropicssl"]
+	path = VPlayer_library/jni/tropicssl
+	url = https://review.appunite.com/tropicssl.git
