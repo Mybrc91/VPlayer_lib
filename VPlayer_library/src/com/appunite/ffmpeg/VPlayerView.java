@@ -86,4 +86,8 @@ public class VPlayerView extends FFmpegSurfaceView {
         return mPlayer.getVideoHeight();
     }
 
+    public boolean isPlaying() {
+        return mIsPlaying;
+    }
+
 }
