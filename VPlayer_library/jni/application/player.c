@@ -180,6 +180,7 @@ struct Player {
 	jmethodID audio_track_get_sample_rate_method;
 
 	jmethodID player_prepare_frame_method;
+	jmethodID player_video_dimensions_ready_method;
 	jmethodID player_on_update_time_method;
 	jmethodID player_prepare_audio_track_method;
 	jmethodID player_set_stream_info_method;
@@ -258,6 +259,7 @@ enum PlayerErrors {
 	ERROR_COULD_NOT_CREATE_GLOBAL_REF,
 	ERROR_NOT_FOUND_PLAYER_CLASS,
 	ERROR_NOT_FOUND_PREPARE_FRAME_METHOD,
+	ERROR_NOT_FOUND_VIDEO_DIMENSIONS_READY_METHOD,
 	ERROR_NOT_FOUND_ON_UPDATE_TIME_METHOD,
 	ERROR_NOT_FOUND_PREPARE_AUDIO_TRACK_METHOD,
 	ERROR_NOT_FOUND_SET_STREAM_INFO_METHOD,
@@ -827,6 +829,7 @@ int player_decode_video(struct DecoderData * decoder_data, JNIEnv * env,
 	}
 	ANativeWindow_setBuffersGeometry(window, ctx->width, ctx->height,
 			WINDOW_FORMAT_RGBA_8888);
+
 	if (ANativeWindow_lock(window, &buffer, NULL) != 0) {
 		pthread_mutex_unlock(&player->mutex_queue);
 		goto skip_frame;
@@ -2372,6 +2375,7 @@ int player_set_data_source(struct State *state, const char *file_path,
 		err = player->audio_stream_no;
 		goto error;
 	}
+
 #ifdef SUBTITLES
 	if (subtitle_stream_no == NO_STREAM) {
 		player->subtitle_stream_no = -1;
@@ -2614,6 +2618,14 @@ int jni_player_set_data_source(JNIEnv *env, jobject thiz, jstring string,
 	int ret = player_set_data_source(&state, file_path, dict, video_stream_no,
 			audio_stream_no, subtitle_stream_no);
 
+	// Update the dimensions of the video
+	if (player->input_codec_ctxs) {
+	    AVCodecContext * ctx = player->input_codec_ctxs[player->video_stream_no];
+	    if (player->player_video_dimensions_ready_method != NULL)
+            (*env)->CallVoidMethod(env, thiz, player->player_video_dimensions_ready_method,
+                ctx->width, ctx->height);
+	}
+
 	(*env)->ReleaseStringUTFChars(env, string, file_path);
 	return ret;
 }
@@ -2692,6 +2704,13 @@ int jni_player_init(JNIEnv *env, jobject thiz) {
 			err = ERROR_NOT_FOUND_PREPARE_FRAME_METHOD;
 			goto free_player;
 		}
+
+        player->player_video_dimensions_ready_method = java_get_method(env, player_class,
+		        player_video_dimensions_ready);
+        if (player->player_video_dimensions_ready_method == NULL) {
+            err = ERROR_NOT_FOUND_PREPARE_FRAME_METHOD;
+            goto free_player;
+        }
 
 		player->player_on_update_time_method = java_get_method(env,
 				player_class, player_on_update_time);

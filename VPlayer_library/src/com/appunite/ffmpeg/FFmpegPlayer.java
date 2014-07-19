@@ -204,6 +204,9 @@ public class FFmpegPlayer {
     private int mNativePlayer;
     private final Activity activity;
 
+    private int mVideoWidth = 0;
+    private int mVideoHeight = 0;
+
     private final Runnable updateTimeRunnable = new Runnable() {
 
         @Override
@@ -291,6 +294,10 @@ public class FFmpegPlayer {
 
     private native void resumeNative() throws NotPlayingException;
 
+    private native int getNativeVideoWidth();
+
+    private native int getNativeVideoHeight();
+
     public void pause() {
         new PauseTask(this).execute();
     }
@@ -311,6 +318,20 @@ public class FFmpegPlayer {
         this.mRenderedFrame.height = height;
         this.mRenderedFrame.width = width;
         return bitmap;
+    }
+
+    // Callback once video is ready
+    private void videoDimensionsReady(int width, int height) {
+        mVideoWidth = width;
+        mVideoHeight = height;
+    }
+
+    public int getVideoWidth() {
+        return mVideoWidth;
+    }
+
+    public int getVideoHeight() {
+        return mVideoHeight;
     }
 
     private void onUpdateTime(long currentUs, long maxUs, boolean isFinished) {

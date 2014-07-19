@@ -78,4 +78,12 @@ public class VPlayerView extends FFmpegSurfaceView {
         mPlayer.seek(0);
     }
 
+    public int getVideoWidth() {
+        return mPlayer.getVideoWidth();
+    }
+
+    public int getVideoHeight() {
+        return mPlayer.getVideoHeight();
+    }
+
 }

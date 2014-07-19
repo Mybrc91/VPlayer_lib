@@ -98,6 +98,7 @@ static JavaMethod player_on_update_time = {"onUpdateTime","(JJZ)V"};
 static JavaMethod player_prepare_audio_track = {"prepareAudioTrack", "(II)Landroid/media/AudioTrack;"};
 static JavaMethod player_prepare_frame = {"prepareFrame", "(II)Landroid/graphics/Bitmap;"};
 static JavaMethod player_set_stream_info = {"setStreamsInfo", "([Lcom/appunite/ffmpeg/FFmpegStreamInfo;)V"};
+static JavaMethod player_video_dimensions_ready = {"videoDimensionsReady", "(II)V"};
 
 // AudioTrack
 static char *android_track_class_path_name = "android/media/AudioTrack";
