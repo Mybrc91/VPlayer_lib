@@ -1,6 +1,6 @@
 /*
- * NativeTester.java
- * Copyright (c) 2012 Jacek Marchwicki
+ * NotPlayingException.java
+ * Copyright (c) 2012 Jacek Marchwicki, modified by Matthew Ng
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,21 @@
  *
  */
 
-package com.appunite.ffmpeg;
+package com.vplayer.exception;
 
-class NativeTester {
-	static {
-		System.loadLibrary("nativetester-jni");
-	}
-	
-	native boolean isNeon();
+public class NotPlayingException extends Exception {
+    private static final long serialVersionUID = 1L;
+
+    public NotPlayingException(String detailMessage, Throwable throwable) {
+        super(detailMessage, throwable);
+    }
+
+    public NotPlayingException(String detailMessage) {
+        super(detailMessage);
+    }
+
+    public NotPlayingException() {
+        super();
+    }
+
 }

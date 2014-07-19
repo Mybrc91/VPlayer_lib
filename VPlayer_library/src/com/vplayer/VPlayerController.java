@@ -1,6 +1,6 @@
 /*
- * FFmpegPlayer.java
- * Copyright (c) 2012 Jacek Marchwicki
+ * VPlayerController.java
+ * Copyright (c) 2012 Jacek Marchwicki, Modified by Matthew Ng
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
  *
  */
 
-package com.appunite.ffmpeg;
+package com.vplayer;
 
 import java.util.Map;
 
@@ -28,12 +28,15 @@ import android.media.AudioTrack;
 import android.os.AsyncTask;
 import android.view.Surface;
 
-public class FFmpegPlayer {
+import com.vplayer.exception.NotPlayingException;
+import com.vplayer.exception.VPlayerException;
+
+class VPlayerController {
     private static class StopTask extends AsyncTask<Void, Void, Void> {
 
-        private final FFmpegPlayer player;
+        private final VPlayerController player;
 
-        public StopTask(FFmpegPlayer player) {
+        public StopTask(VPlayerController player) {
             this.player = player;
         }
 
@@ -46,23 +49,23 @@ public class FFmpegPlayer {
         @Override
         protected void onPostExecute(Void result) {
             if (player.mpegListener != null) {
-                player.mpegListener.onFFStop();
+                player.mpegListener.onMediaStop();
             }
         }
 
     }
 
     private static class SetDataSourceTaskResult {
-        FFmpegError error;
-        FFmpegStreamInfo[] streams;
+        VPlayerException error;
+        MediaStreamInfo[] streams;
     }
 
     private static class SetDataSourceTask extends
             AsyncTask<Object, Void, SetDataSourceTaskResult> {
 
-        private final FFmpegPlayer player;
+        private final VPlayerController player;
 
-        public SetDataSourceTask(FFmpegPlayer player) {
+        public SetDataSourceTask(VPlayerController player) {
             this.player = player;
         }
 
@@ -82,7 +85,7 @@ public class FFmpegPlayer {
             int err = player.setDataSourceNative(url, map, videoStreamNo, audioStreamNo, subtitleStreamNo);
             SetDataSourceTaskResult result = new SetDataSourceTaskResult();
             if (err < 0) {
-                result.error = new FFmpegError(err);
+                result.error = new VPlayerException(err);
                 result.streams = null;
             } else {
                 result.error = null;
@@ -94,7 +97,7 @@ public class FFmpegPlayer {
         @Override
         protected void onPostExecute(SetDataSourceTaskResult result) {
             if (player.mpegListener != null) {
-                player.mpegListener.onFFDataSourceLoaded(result.error,
+                player.mpegListener.onMediaSourceLoaded(result.error,
                         result.streams);
             }
         }
@@ -104,9 +107,9 @@ public class FFmpegPlayer {
     private static class SeekTask extends
             AsyncTask<Long, Void, NotPlayingException> {
 
-        private final FFmpegPlayer player;
+        private final VPlayerController player;
 
-        public SeekTask(FFmpegPlayer player) {
+        public SeekTask(VPlayerController player) {
             this.player = player;
         }
 
@@ -123,7 +126,7 @@ public class FFmpegPlayer {
         @Override
         protected void onPostExecute(NotPlayingException result) {
             if (player.mpegListener != null) {
-                player.mpegListener.onFFSeeked(result);
+                player.mpegListener.onMediaSeeked(result);
             }
         }
 
@@ -132,9 +135,9 @@ public class FFmpegPlayer {
     private static class PauseTask extends
             AsyncTask<Void, Void, NotPlayingException> {
 
-        private final FFmpegPlayer player;
+        private final VPlayerController player;
 
-        public PauseTask(FFmpegPlayer player) {
+        public PauseTask(VPlayerController player) {
             this.player = player;
         }
 
@@ -151,7 +154,7 @@ public class FFmpegPlayer {
         @Override
         protected void onPostExecute(NotPlayingException result) {
             if (player.mpegListener != null) {
-                player.mpegListener.onFFPause(result);
+                player.mpegListener.onMediaPause(result);
             }
         }
 
@@ -160,9 +163,9 @@ public class FFmpegPlayer {
     private static class ResumeTask extends
             AsyncTask<Void, Void, NotPlayingException> {
 
-        private final FFmpegPlayer player;
+        private final VPlayerController player;
 
-        public ResumeTask(FFmpegPlayer player) {
+        public ResumeTask(VPlayerController player) {
             this.player = player;
         }
 
@@ -179,7 +182,7 @@ public class FFmpegPlayer {
         @Override
         protected void onPostExecute(NotPlayingException result) {
             if (player.mpegListener != null) {
-                player.mpegListener.onFFResume(result);
+                player.mpegListener.onMediaResume(result);
             }
         }
 
@@ -198,7 +201,7 @@ public class FFmpegPlayer {
 
     public static final int UNKNOWN_STREAM = -1;
     public static final int NO_STREAM = -2;
-    private FFmpegListener mpegListener = null;
+    private VPlayerListener mpegListener = null;
     private final RenderedFrame mRenderedFrame = new RenderedFrame();
 
     private int mNativePlayer;
@@ -212,7 +215,7 @@ public class FFmpegPlayer {
         @Override
         public void run() {
             if (mpegListener != null) {
-                mpegListener.onFFUpdateTime(mCurrentTimeUs,
+                mpegListener.onMediaUpdateTime(mCurrentTimeUs,
                     mVideoDurationUs, mIsFinished);
             }
         }
@@ -221,7 +224,7 @@ public class FFmpegPlayer {
 
     private long mCurrentTimeUs;
     private long mVideoDurationUs;
-    private FFmpegStreamInfo[] mStreamsInfos = null;
+    private MediaStreamInfo[] mStreamsInfos = null;
     private boolean mIsFinished = false;
 
     static class RenderedFrame {
@@ -230,7 +233,11 @@ public class FFmpegPlayer {
         public int width;
     }
 
-    public FFmpegPlayer(FFmpegDisplay videoView, Activity activity) {
+    public interface VPlayerDisplay {
+        void setMpegPlayer(VPlayerController vPlayerController);
+    }
+
+    public VPlayerController(VPlayerDisplay videoView, Activity activity) {
         this.activity = activity;
         int error = initNative();
         if (error != 0) {
@@ -273,7 +280,7 @@ public class FFmpegPlayer {
      * @param streamsInfos
      *            - could be null
      */
-    private void setStreamsInfo(FFmpegStreamInfo[] streamsInfos) {
+    private void setStreamsInfo(MediaStreamInfo[] streamsInfos) {
         this.mStreamsInfos = streamsInfos;
     }
 
@@ -282,7 +289,7 @@ public class FFmpegPlayer {
      *
      * @return return streams info after successful setDataSource or null
      */
-    protected FFmpegStreamInfo[] getStreamsInfo() {
+    protected MediaStreamInfo[] getStreamsInfo() {
         return mStreamsInfos;
     }
 
@@ -387,7 +394,7 @@ public class FFmpegPlayer {
         }
     }
 
-    private void setVideoListener(FFmpegListener mpegListener) {
+    private void setVideoListener(VPlayerListener mpegListener) {
         this.setMpegListener(mpegListener);
     }
 
@@ -402,11 +409,11 @@ public class FFmpegPlayer {
                 Integer.valueOf(subtitlesStream));
     }
 
-    public FFmpegListener getMpegListener() {
+    public VPlayerListener getMpegListener() {
         return mpegListener;
     }
 
-    public void setMpegListener(FFmpegListener mpegListener) {
+    public void setMpegListener(VPlayerListener mpegListener) {
         this.mpegListener = mpegListener;
     }
 

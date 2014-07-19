@@ -20,6 +20,7 @@
 #define H_PLAYER
 
 #include <libavutil/audioconvert.h>
+#include <jni_helper.h>
 
 static JavaMethod empty_constructor = {"<init>", "()V"};
 
@@ -30,7 +31,7 @@ static char *interrupted_exception_class_path_name = "java/lang/InterruptedExcep
 static char *runtime_exception_class_path_name = "java/lang/RuntimeException";
 
 // NotPlayingException
-static char *not_playing_exception_class_path_name = "com/appunite/ffmpeg/NotPlayingException";
+static char *not_playing_exception_class_path_name = JAVA_PACKAGE_PATH"/NotPlayingException";
 
 // Object
 static char *object_class_path_name = "java/lang/Object";
@@ -42,7 +43,7 @@ static JavaMethod map_key_set = {"keySet", "()Ljava/util/Set;"};
 static JavaMethod map_get = {"get", "(Ljava/lang/Object;)Ljava/lang/Object;"};
 static JavaMethod map_put = {"put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"};
 
-// FFmpegStreamInfo.CodeType
+// MediaStreamInfo.CodeType
 enum CodecType {
 	CODEC_TYPE_UNKNOWN = 0,
 	CODEC_TYPE_AUDIO = 1,
@@ -58,8 +59,8 @@ enum StreamNumber {
 	UNKNOWN_STREAM = -1,
 };
 
-// FFmpegStreamInfo
-static char *stream_info_class_path_name = "com/appunite/ffmpeg/FFmpegStreamInfo";
+// MediaStreamInfo
+static char *stream_info_class_path_name = JAVA_PACKAGE_PATH"/MediaStreamInfo";
 static JavaMethod steram_info_set_metadata = {"setMetadata", "(Ljava/util/Map;)V"};
 static JavaMethod steram_info_set_media_type_internal = {"setMediaTypeInternal", "(I)V"};
 static JavaMethod stream_info_set_stream_number = {"setStreamNumber", "(I)V"};
@@ -90,14 +91,13 @@ static const struct {
     { "7.1",         8,  AV_CH_LAYOUT_7POINT1 },
 };
 
-
-// FFmpegPlayer
-static char *player_class_path_name = "com/appunite/ffmpeg/FFmpegPlayer";
+// VPlayerController
+static char *player_class_path_name = JAVA_PACKAGE_PATH"/VPlayerController";
 static JavaField player_m_native_player = {"mNativePlayer", "I"};
 static JavaMethod player_on_update_time = {"onUpdateTime","(JJZ)V"};
 static JavaMethod player_prepare_audio_track = {"prepareAudioTrack", "(II)Landroid/media/AudioTrack;"};
 static JavaMethod player_prepare_frame = {"prepareFrame", "(II)Landroid/graphics/Bitmap;"};
-static JavaMethod player_set_stream_info = {"setStreamsInfo", "([Lcom/appunite/ffmpeg/FFmpegStreamInfo;)V"};
+static JavaMethod player_set_stream_info = {"setStreamsInfo", "([L"JAVA_PACKAGE_PATH"/MediaStreamInfo;)V"};
 static JavaMethod player_video_dimensions_ready = {"videoDimensionsReady", "(II)V"};
 
 // AudioTrack

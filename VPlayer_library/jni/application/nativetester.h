@@ -19,7 +19,9 @@
 #ifndef NATIVETESTER_H_
 #define NATIVETESTER_H_
 
-static const char *nativetester_class_path_name = "com/appunite/ffmpeg/NativeTester";
+#include "jni_helper.h"
+
+static const char *nativetester_class_path_name = JAVA_PACKAGE_PATH"/NativeTester";
 
 jboolean jni_nativetester_is_neon(JNIEnv *env, jobject thiz);
 

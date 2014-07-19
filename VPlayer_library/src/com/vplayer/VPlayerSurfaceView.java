@@ -1,6 +1,6 @@
 /*
- * FFmpegSurfaceView.java
- * Copyright (c) 2012 Jacek Marchwicki
+ * VPlayerSurfaceView.java
+ * Copyright (c) 2012 Jacek Marchwicki, modified by Matthew Ng
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
  *
  */
 
-package com.appunite.ffmpeg;
+package com.vplayer;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -25,25 +25,27 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class FFmpegSurfaceView extends SurfaceView implements FFmpegDisplay,
+import com.vplayer.VPlayerController.VPlayerDisplay;
+
+class VPlayerSurfaceView extends SurfaceView implements VPlayerDisplay,
         SurfaceHolder.Callback {
 
     public static enum ScaleType {
         CENTER_CROP, CENTER_INSIDE, FIT_XY
     }
 
-    private FFmpegPlayer mMpegPlayer = null;
+    private VPlayerController mMpegPlayer = null;
     private boolean mCreated = false;
 
-    public FFmpegSurfaceView(Context context) {
+    public VPlayerSurfaceView(Context context) {
         this(context, null, 0);
     }
 
-    public FFmpegSurfaceView(Context context, AttributeSet attrs) {
+    public VPlayerSurfaceView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public FFmpegSurfaceView(Context context, AttributeSet attrs, int defStyle) {
+    public VPlayerSurfaceView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         SurfaceHolder holder = getHolder();
@@ -52,13 +54,13 @@ public class FFmpegSurfaceView extends SurfaceView implements FFmpegDisplay,
     }
 
     @Override
-    public void setMpegPlayer(FFmpegPlayer fFmpegPlayer) {
+    public void setMpegPlayer(VPlayerController vPlayerController) {
         if (mMpegPlayer != null) {
             throw new RuntimeException(
                     "setMpegPlayer could not be called twice");
         }
 
-        this.mMpegPlayer = fFmpegPlayer;
+        this.mMpegPlayer = vPlayerController;
     }
 
     @Override

@@ -18,13 +18,13 @@
 
 #include <libavutil/avstring.h>
 #include <libavformat/avformat.h>
-#include <jni.h>
+#include <jni_helper.h>
 
 #include "ffmpeg/libavformat/url.h"
 
 #include "jni-protocol.h"
 
-static const char *jni_reader_class_name = "com/appunite/ffmpeg/JniReader";
+static const char *jni_reader_class_name = JAVA_PACKAGE_PATH"/JniReader";
 static JavaVM *global_jvm;
 
 static int jni_read(URLContext *h, unsigned char *buf, int size) {

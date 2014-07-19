@@ -1,6 +1,6 @@
 /*
- * FFmpegListener.java
- * Copyright (c) 2012 Jacek Marchwicki
+ * VPlayerException.java
+ * Copyright (c) 2012 Jacek Marchwicki, modified by Matthew Ng
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,13 @@
  *
  */
 
-package com.appunite.ffmpeg;
+package com.vplayer.exception;
 
-public interface FFmpegListener {
-	void onFFDataSourceLoaded(FFmpegError err, FFmpegStreamInfo[] streams);
+public class VPlayerException extends Exception {
 
-	void onFFResume(NotPlayingException result);
+    public VPlayerException(int err) {
+        super(String.format("VPlayer error %d", err));
+    }
 
-	void onFFPause(NotPlayingException err);
-
-	void onFFStop();
-
-	void onFFUpdateTime(long mCurrentTimeUs, long mVideoDurationUs, boolean isFinished);
-
-	void onFFSeeked(NotPlayingException result);
-
+    private static final long serialVersionUID = 1L;
 }

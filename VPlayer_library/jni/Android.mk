@@ -21,7 +21,7 @@ include $(CLEAR_VARS)
 #   Presets - comment out what you don't need
 #
 #           If you comment out FEATURE_NEON, you need to remove System.LoadLibrary
-#           from the java code in FFmpegPlayer.java
+#           from the java code in VPlayerController.java
 FEATURE_NEON:=yes
 #LIBRARY_PROFILER:=yes
 
