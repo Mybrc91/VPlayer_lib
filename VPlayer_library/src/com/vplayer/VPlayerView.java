@@ -18,12 +18,18 @@
 
 package com.vplayer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
 public class VPlayerView extends VPlayerSurfaceView {
+    public static final int UNKNOWN_STREAM = VPlayerController.UNKNOWN_STREAM;
+    public static final int NO_STREAM = VPlayerController.NO_STREAM;
+
     private final VPlayerController mPlayer;
     private final Activity mAct;
     private boolean mIsPlaying;
@@ -54,8 +60,32 @@ public class VPlayerView extends VPlayerSurfaceView {
         mAct.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    public void setVideoPath(String path) {
+    public void setDateSource(String path) {
         mPlayer.setDataSource(path);
+    }
+
+    public void setDateSource(String path, String fontPath) {
+        setDateSource(path, fontPath, null);
+    }
+
+    public void setDateSource(String path, int videoStreamIndex, int audioStreamIndex) {
+        setDateSource(path, null, null, videoStreamIndex, audioStreamIndex, NO_STREAM);
+    }
+
+    public void setDateSource(String path, String fontPath, String encryptionKey) {
+        setDateSource(path, fontPath, encryptionKey, UNKNOWN_STREAM, UNKNOWN_STREAM, UNKNOWN_STREAM);
+    }
+
+    public void setDateSource(String path, String fontPath, String encryptionKey,
+            int videoStreamIndex, int audioStreamIndex, int subtitleStreamIndex) {
+        Map<String, String> map = new HashMap<String, String>();
+        if (fontPath != null) {
+            map.put(VPlayerController.FONT_MAP_KEY, fontPath);
+        }
+        if (encryptionKey != null) {
+            map.put(VPlayerController.ENCRYPTION_KEY, encryptionKey);
+        }
+        mPlayer.setDataSource(path, map, videoStreamIndex, audioStreamIndex, subtitleStreamIndex);
     }
 
     public void setVideoListener(VPlayerListener listener) {

@@ -201,6 +201,8 @@ class VPlayerController {
 
     public static final int UNKNOWN_STREAM = -1;
     public static final int NO_STREAM = -2;
+    public static final String FONT_MAP_KEY = "ass_default_font_path";
+    public static final String ENCRYPTION_KEY = "aeskey";
     private VPlayerListener mpegListener = null;
     private final RenderedFrame mRenderedFrame = new RenderedFrame();
 
