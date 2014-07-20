@@ -20,6 +20,7 @@ package com.vplayer;
 
 import android.app.Activity;
 import android.util.AttributeSet;
+import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
 public class VPlayerView extends VPlayerSurfaceView {
@@ -70,6 +71,17 @@ public class VPlayerView extends VPlayerSurfaceView {
     public void onResume() {
         if (mIsPlaying) {
             mPlayer.resume();
+        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        super.surfaceCreated(holder);
+
+        // When coming back to the video from somewhere else as paused,
+        // we render the previous frame or else it will show black screen
+        if (!mIsPlaying) {
+            mPlayer.renderLastNativeFrame();
         }
     }
 

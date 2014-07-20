@@ -269,6 +269,8 @@ class VPlayerController {
 
     native void renderFramePause();
 
+    native void renderLastNativeFrame();
+
     private native void seekNative(long positionUs) throws NotPlayingException;
 
     private native long getVideoDurationNative();
@@ -416,5 +418,4 @@ class VPlayerController {
     public void setMpegListener(VPlayerListener mpegListener) {
         this.mpegListener = mpegListener;
     }
-
 }

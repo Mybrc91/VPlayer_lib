@@ -971,7 +971,6 @@ int player_decode_video(struct DecoderData * decoder_data, JNIEnv * env,
 
 		pthread_mutex_unlock(&player->mutex_queue);
 
-
 		/* libass stores an RGBA color in the format RRGGBBAA,
 		 * where AA is the transparency level */
 		if (subtitle != NULL) {
@@ -2913,3 +2912,35 @@ void jni_player_render_frame_stop(JNIEnv *env, jobject thiz) {
     jni_player_render_frame_pause(env, thiz);
 }
 
+void jni_player_render_last_frame(JNIEnv *env, jobject thiz) {
+    struct Player * player = player_get_player_field(env, thiz);
+
+    AVCodecContext* ctx = player->input_codec_ctxs[player->video_stream_no];
+    if (ctx) {
+        ANativeWindow_Buffer buffer;
+        ANativeWindow * window;
+
+        pthread_mutex_lock(&player->mutex_queue);
+        window = player->window;
+        if (window == NULL) {
+            pthread_mutex_unlock(&player->mutex_queue);
+            return;
+        }
+        ANativeWindow_setBuffersGeometry(window, ctx->width, ctx->height,
+                WINDOW_FORMAT_RGBA_8888);
+
+        if (ANativeWindow_lock(window, &buffer, NULL) != 0) {
+            pthread_mutex_unlock(&player->mutex_queue);
+            return;
+        }
+        pthread_mutex_unlock(&player->mutex_queue);
+
+        // Copy the previous frame to the window
+        int y = 0;
+        for(y = 0; y < ctx->height; y++) {
+            memcpy( (uint8_t*) buffer.bits + (y * buffer.stride * 4),
+                    player->rgb_frame->data[0] + y * player->rgb_frame->linesize[0], ctx->width * 4);
+        }
+        ANativeWindow_unlockAndPost(window);
+    }
+}
