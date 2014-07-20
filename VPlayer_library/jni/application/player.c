@@ -2617,12 +2617,14 @@ int jni_player_set_data_source(JNIEnv *env, jobject thiz, jstring string,
 	int ret = player_set_data_source(&state, file_path, dict, video_stream_no,
 			audio_stream_no, subtitle_stream_no);
 
-	// Update the dimensions of the video
-	if (player->input_codec_ctxs) {
-	    AVCodecContext * ctx = player->input_codec_ctxs[player->video_stream_no];
-	    if (player->player_video_dimensions_ready_method != NULL)
-            (*env)->CallVoidMethod(env, thiz, player->player_video_dimensions_ready_method,
-                ctx->width, ctx->height);
+	if (ret >= 0) {
+        // Update the dimensions of the video
+        if (player->input_codec_ctxs) {
+            AVCodecContext * ctx = player->input_codec_ctxs[player->video_stream_no];
+            if (player->player_video_dimensions_ready_method != NULL)
+                (*env)->CallVoidMethod(env, thiz, player->player_video_dimensions_ready_method,
+                    ctx->width, ctx->height);
+        }
 	}
 
 	(*env)->ReleaseStringUTFChars(env, string, file_path);
