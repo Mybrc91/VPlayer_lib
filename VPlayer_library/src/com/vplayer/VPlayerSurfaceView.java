@@ -95,7 +95,7 @@ class VPlayerSurfaceView extends SurfaceView implements VPlayerDisplay,
     }
 
     // You must use this from an activity finish() or else the video's sound will end awkwardly
-    public void onFinish() {
+    public void finish() {
         mAboutToFinish = true;
     }
 

@@ -33,6 +33,7 @@ public class VPlayerView extends VPlayerSurfaceView {
     private final VPlayerController mPlayer;
     private final Activity mAct;
     private boolean mIsPlaying;
+    private boolean mAlreadyFinished;
 
     public VPlayerView(Activity activity) {
         this(activity, null);
@@ -47,6 +48,7 @@ public class VPlayerView extends VPlayerSurfaceView {
         mAct = activity;
         mPlayer = new VPlayerController(this, activity);
         mIsPlaying = false;
+        mAlreadyFinished = false;
     }
 
     public void setWindowFullscreen() {
@@ -93,13 +95,13 @@ public class VPlayerView extends VPlayerSurfaceView {
     }
 
     public void onPause() {
-        if (mIsPlaying) {
+        if (mIsPlaying && !mAlreadyFinished) {
             mPlayer.pause();
         }
     }
 
     public void onResume() {
-        if (mIsPlaying) {
+        if (mIsPlaying && !mAlreadyFinished) {
             mPlayer.resume();
         }
     }
@@ -115,27 +117,36 @@ public class VPlayerView extends VPlayerSurfaceView {
         }
     }
 
-    public void onDestroy() {
+    @Override
+    public void finish() {
+        super.finish();
         mPlayer.stop();
+        mAlreadyFinished = true;
     }
 
     public void pause() {
         mIsPlaying = false;
-        mPlayer.pause();
+        if (!mAlreadyFinished) {
+            mPlayer.pause();
+        }
     }
 
     public void seek(long positionUs) {
-        mPlayer.seek(positionUs);
+        if (!mAlreadyFinished) {
+            mPlayer.seek(positionUs);
+        }
     }
 
     public void play() {
         mIsPlaying = true;
-        mPlayer.resume();
+        if (!mAlreadyFinished) {
+            mPlayer.resume();
+        }
     }
 
     public void stop() {
         pause();
-        mPlayer.seek(0);
+        seek(0);
     }
 
     public int getVideoWidth() {
