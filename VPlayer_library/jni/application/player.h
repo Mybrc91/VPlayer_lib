@@ -31,7 +31,7 @@ static char *interrupted_exception_class_path_name = "java/lang/InterruptedExcep
 static char *runtime_exception_class_path_name = "java/lang/RuntimeException";
 
 // NotPlayingException
-static char *not_playing_exception_class_path_name = JAVA_PACKAGE_PATH"/NotPlayingException";
+static char *not_playing_exception_class_path_name = JAVA_PACKAGE_PATH"/exception/NotPlayingException";
 
 // Object
 static char *object_class_path_name = "java/lang/Object";
