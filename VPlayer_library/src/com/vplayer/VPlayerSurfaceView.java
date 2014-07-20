@@ -36,6 +36,7 @@ class VPlayerSurfaceView extends SurfaceView implements VPlayerDisplay,
 
     private VPlayerController mMpegPlayer = null;
     private boolean mCreated = false;
+    private boolean mAboutToFinish = false;
 
     public VPlayerSurfaceView(Context context) {
         this(context, null, 0);
@@ -82,11 +83,20 @@ class VPlayerSurfaceView extends SurfaceView implements VPlayerDisplay,
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // This will cause a surface error in logcat but will not crash, ignore it
-        //     queueBuffer: error queuing buffer to SurfaceTexture, -19
-        //     queueBuffer (handle=0x2a5e89f8) failed (No such device)
-        this.mMpegPlayer.renderFramePause();
+        if (mAboutToFinish) {
+            mMpegPlayer.renderFrameStop();
+        } else {
+            // This will cause a surface error in logcat when going home but will not crash, ignore it
+            //     queueBuffer: error queuing buffer to SurfaceTexture, -19
+            //     queueBuffer (handle=0x2a5e89f8) failed (No such device)
+            mMpegPlayer.renderFramePause();
+        }
         mCreated = false;
+    }
+
+    // You must use this from an activity finish() or else the video's sound will end awkwardly
+    public void onFinish() {
+        mAboutToFinish = true;
     }
 
 }
