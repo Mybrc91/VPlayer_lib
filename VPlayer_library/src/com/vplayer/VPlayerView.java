@@ -63,13 +63,13 @@ public class VPlayerView extends VPlayerSurfaceView {
 
     public void onPause() {
         if (mIsPlaying) {
-            pause();
+            mPlayer.pause();
         }
     }
 
     public void onResume() {
-        if (!mIsPlaying) {
-            play();
+        if (mIsPlaying) {
+            mPlayer.resume();
         }
     }
 
@@ -107,5 +107,4 @@ public class VPlayerView extends VPlayerSurfaceView {
     public boolean isPlaying() {
         return mIsPlaying;
     }
-
 }
