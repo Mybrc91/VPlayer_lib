@@ -62,23 +62,23 @@ public class VPlayerView extends VPlayerSurfaceView {
         mAct.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    public void setDateSource(String path) {
+    public void setDataSource(String path) {
         mPlayer.setDataSource(path);
     }
 
-    public void setDateSource(String path, String fontPath) {
-        setDateSource(path, fontPath, null);
+    public void setDataSource(String path, String fontPath) {
+        setDataSource(path, fontPath, null);
     }
 
-    public void setDateSource(String path, int videoStreamIndex, int audioStreamIndex) {
-        setDateSource(path, null, null, videoStreamIndex, audioStreamIndex, NO_STREAM);
+    public void setDataSource(String path, int videoStreamIndex, int audioStreamIndex) {
+        setDataSource(path, null, null, videoStreamIndex, audioStreamIndex, NO_STREAM);
     }
 
-    public void setDateSource(String path, String fontPath, String encryptionKey) {
-        setDateSource(path, fontPath, encryptionKey, UNKNOWN_STREAM, UNKNOWN_STREAM, UNKNOWN_STREAM);
+    public void setDataSource(String path, String fontPath, String encryptionKey) {
+        setDataSource(path, fontPath, encryptionKey, UNKNOWN_STREAM, UNKNOWN_STREAM, UNKNOWN_STREAM);
     }
 
-    public void setDateSource(String path, String fontPath, String encryptionKey,
+    public void setDataSource(String path, String fontPath, String encryptionKey,
             int videoStreamIndex, int audioStreamIndex, int subtitleStreamIndex) {
         Map<String, String> map = new HashMap<String, String>();
         if (fontPath != null) {

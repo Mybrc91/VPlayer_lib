@@ -105,7 +105,7 @@ public class VideoActivity extends Activity {
         }
 
         // Set the video path
-        mPlayerView.setDateSource(path, fontPath);
+        mPlayerView.setDataSource(path, fontPath);
     }
 
     private void alert(String title, String message) {
