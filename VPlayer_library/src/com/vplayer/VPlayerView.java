@@ -119,9 +119,12 @@ public class VPlayerView extends VPlayerSurfaceView {
 
     @Override
     public void finish() {
-        super.finish();
-        mPlayer.stop();
-        mAlreadyFinished = true;
+        if (!mAlreadyFinished) {
+            mPlayer.pause();
+            super.finish();
+            mPlayer.stop();
+            mAlreadyFinished = true;
+        }
     }
 
     public void pause() {
