@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -37,7 +38,7 @@ public class VideoActivity extends Activity {
         this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFormat(PixelFormat.RGBA_8888);
         super.onCreate(savedInstanceState);
-        this.getWindow().setBackgroundDrawable(null);
+        findViewById(android.R.id.content).setBackgroundColor(Color.BLACK);
 
         Intent in = getIntent();
         if (in != null) {
