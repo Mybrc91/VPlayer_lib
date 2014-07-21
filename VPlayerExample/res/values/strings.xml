@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">VPlayer Example</string>
+
+    <!-- FileSystemAdapter.java -->
+    <string name="directory_back">Back</string>
+    <string name="empty"></string>
+</resources>

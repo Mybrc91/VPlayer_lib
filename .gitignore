@@ -12,14 +12,15 @@ VPlayer_library/jni/.settings/**
 VPlayer_library/lint.xml
 VPlayer_library/jni/libyuv/**
 
-VPlayer_library/bin/**
-VPlayer_library/gen/**
-VPlayer_library/tmp/**
-VPlayer_library/obj/**
-VPlayer_library/local.properties
-VPlayer_library/proguard/**
-VPlayer_library/.settings/**
-VPlayer_library/lint.xml
+VPlayerExample/bin/**
+VPlayerExample/gen/**
+VPlayerExample/tmp/**
+VPlayerExample/obj/**
+VPlayerExample/local.properties
+VPlayerExample/proguard/**
+VPlayerExample/.settings/**
+VPlayerExample/lint.xml
+VPlayerExample/proguard-project.txt
 
 *~
 libyuv/
