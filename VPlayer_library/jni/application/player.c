@@ -152,6 +152,9 @@ struct DecoderData {
 	int stream_no;
 };
 
+// If the audio and video lags only at the beginning, make this larger and see if that helps
+#define PLAYER_QUEUE_SIZE 300
+
 #define MAX_STREAMS 3
 
 struct Player {
@@ -1831,7 +1834,7 @@ int player_alloc_queues(struct State *state) {
 	int capture_streams_no = player->caputre_streams_no;
 	int stream_no;
 	for (stream_no = 0; stream_no < capture_streams_no; ++stream_no) {
-		player->packets[stream_no] = queue_init_with_custom_lock(50,
+		player->packets[stream_no] = queue_init_with_custom_lock(PLAYER_QUEUE_SIZE,
 				(queue_fill_func) player_fill_packet,
 				(queue_free_func) player_free_packet, state, state,
 				&player->mutex_queue, &player->cond_queue);
