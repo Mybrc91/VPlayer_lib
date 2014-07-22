@@ -16,10 +16,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.vplayer.MediaStreamInfo;
 import com.vplayer.VPlayerListener;
 import com.vplayer.VPlayerView;
+import com.vplayer.exception.NotPlayingException;
 import com.vplayer.exception.VPlayerException;
 
 public class VideoActivity extends Activity {
@@ -75,6 +77,21 @@ public class VideoActivity extends Activity {
 
                     // Play the video
                     mPlayerView.play();
+                }
+            }
+            @Override
+            public void onMediaPause(NotPlayingException err) {
+                Toast.makeText(VideoActivity.this, "Pause", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onMediaResume(NotPlayingException result) {
+                Toast.makeText(VideoActivity.this, "Play", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onMediaUpdateTime(long mCurrentTimeUs,
+                    long mVideoDurationUs, boolean isFinished) {
+                if (isFinished) {
+                    Toast.makeText(VideoActivity.this, "Video is finished", Toast.LENGTH_SHORT).show();
                 }
             }
         });
