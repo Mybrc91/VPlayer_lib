@@ -37,6 +37,7 @@ public class VPlayerView extends VPlayerSurfaceView {
     private final Activity mAct;
     private boolean mIsPlaying;
     private boolean mAlreadyFinished;
+    private boolean mAllowRenderLastFrame;
     private VPlayerListener mListener;
 
     public VPlayerView(Activity activity) {
@@ -53,6 +54,7 @@ public class VPlayerView extends VPlayerSurfaceView {
         mPlayer = new VPlayerController(this, activity);
         mIsPlaying = false;
         mAlreadyFinished = true;
+        mAllowRenderLastFrame = false;
 
         mPlayer.setMpegListener(new VPlayerListener() {
             @Override
@@ -144,8 +146,13 @@ public class VPlayerView extends VPlayerSurfaceView {
     }
 
     public void onPause() {
-        if (mIsPlaying && !mAlreadyFinished) {
-            mPlayer.pause();
+        if (!mAlreadyFinished) {
+            if (mIsPlaying) {
+                mPlayer.pause();
+            } else {
+                // Allow render if we left the app to somewhere else paused
+                mAllowRenderLastFrame = true;
+            }
         }
     }
 
@@ -161,8 +168,9 @@ public class VPlayerView extends VPlayerSurfaceView {
 
         // When coming back to the video from somewhere else as paused,
         // we render the previous frame or else it will show black screen
-        if (!mIsPlaying && !mAlreadyFinished) {
+        if (!mIsPlaying && !mAlreadyFinished && mAllowRenderLastFrame) {
             mPlayer.renderLastNativeFrame();
+            mAllowRenderLastFrame = false;
         }
     }
 
