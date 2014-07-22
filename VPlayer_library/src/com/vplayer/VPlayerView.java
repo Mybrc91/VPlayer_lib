@@ -26,6 +26,9 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import com.vplayer.exception.NotPlayingException;
+import com.vplayer.exception.VPlayerException;
+
 public class VPlayerView extends VPlayerSurfaceView {
     public static final int UNKNOWN_STREAM = VPlayerController.UNKNOWN_STREAM;
     public static final int NO_STREAM = VPlayerController.NO_STREAM;
@@ -34,6 +37,7 @@ public class VPlayerView extends VPlayerSurfaceView {
     private final Activity mAct;
     private boolean mIsPlaying;
     private boolean mAlreadyFinished;
+    private VPlayerListener mListener;
 
     public VPlayerView(Activity activity) {
         this(activity, null);
@@ -48,7 +52,51 @@ public class VPlayerView extends VPlayerSurfaceView {
         mAct = activity;
         mPlayer = new VPlayerController(this, activity);
         mIsPlaying = false;
-        mAlreadyFinished = false;
+        mAlreadyFinished = true;
+
+        mPlayer.setMpegListener(new VPlayerListener() {
+            @Override
+            public void onMediaPause(NotPlayingException err) {
+                if (mListener != null) {
+                    mListener.onMediaPause(err);
+                }
+            }
+            @Override
+            public void onMediaResume(NotPlayingException result) {
+                if (mListener != null) {
+                    mListener.onMediaResume(result);
+                }
+            }
+            @Override
+            public void onMediaSeeked(NotPlayingException result) {
+                if (mListener != null) {
+                    mListener.onMediaSeeked(result);
+                }
+            }
+            @Override
+            public void onMediaSourceLoaded(VPlayerException err,
+                    MediaStreamInfo[] streams) {
+                if (err != null) {
+                    mAlreadyFinished = true;
+                }
+                if (mListener != null) {
+                    mListener.onMediaSourceLoaded(err, streams);
+                }
+            }
+            @Override
+            public void onMediaStop() {
+                if (mListener != null) {
+                    mListener.onMediaStop();
+                }
+            }
+            @Override
+            public void onMediaUpdateTime(long mCurrentTimeUs,
+                    long mVideoDurationUs, boolean isFinished) {
+                if (mListener != null) {
+                    mListener.onMediaUpdateTime(mCurrentTimeUs, mVideoDurationUs, isFinished);
+                }
+            }
+        });
     }
 
     public void setWindowFullscreen() {
@@ -88,10 +136,11 @@ public class VPlayerView extends VPlayerSurfaceView {
             map.put(VPlayerController.ENCRYPTION_KEY, encryptionKey);
         }
         mPlayer.setDataSource(path, map, videoStreamIndex, audioStreamIndex, subtitleStreamIndex);
+        mAlreadyFinished = false;
     }
 
     public void setVideoListener(VPlayerListener listener) {
-        mPlayer.setMpegListener(listener);
+        mListener = listener;
     }
 
     public void onPause() {
@@ -112,7 +161,7 @@ public class VPlayerView extends VPlayerSurfaceView {
 
         // When coming back to the video from somewhere else as paused,
         // we render the previous frame or else it will show black screen
-        if (!mIsPlaying) {
+        if (!mIsPlaying && !mAlreadyFinished) {
             mPlayer.renderLastNativeFrame();
         }
     }
