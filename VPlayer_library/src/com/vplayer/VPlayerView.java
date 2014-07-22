@@ -63,7 +63,7 @@ public class VPlayerView extends VPlayerSurfaceView {
     }
 
     public void setDataSource(String path) {
-        mPlayer.setDataSource(path);
+        setDataSource(path, null);
     }
 
     public void setDataSource(String path, String fontPath) {
