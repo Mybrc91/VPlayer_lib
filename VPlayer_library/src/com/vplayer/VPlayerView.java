@@ -36,6 +36,7 @@ public class VPlayerView extends VPlayerSurfaceView {
     private final VPlayerController mPlayer;
     private final Activity mAct;
     private boolean mIsPlaying;
+    private boolean mShouldLoop;
     private boolean mAlreadyFinished;
     private boolean mAllowRenderLastFrame;
     private VPlayerListener mListener;
@@ -55,6 +56,7 @@ public class VPlayerView extends VPlayerSurfaceView {
         mIsPlaying = false;
         mAlreadyFinished = true;
         mAllowRenderLastFrame = false;
+        mShouldLoop = false;
 
         mPlayer.setMpegListener(new VPlayerListener() {
             @Override
@@ -96,6 +98,10 @@ public class VPlayerView extends VPlayerSurfaceView {
                     long mVideoDurationUs, boolean isFinished) {
                 if (mListener != null) {
                     mListener.onMediaUpdateTime(mCurrentTimeUs, mVideoDurationUs, isFinished);
+                }
+                if (mShouldLoop && isFinished) {
+                    stop();
+                    play();
                 }
             }
         });
@@ -139,6 +145,10 @@ public class VPlayerView extends VPlayerSurfaceView {
         }
         mPlayer.setDataSource(path, map, videoStreamIndex, audioStreamIndex, subtitleStreamIndex);
         mAlreadyFinished = false;
+    }
+
+    public void setLoop(boolean shouldLoop) {
+        mShouldLoop = shouldLoop;
     }
 
     public void setVideoListener(VPlayerListener listener) {
