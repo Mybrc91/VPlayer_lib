@@ -61,19 +61,19 @@ public class VPlayerView extends VPlayerSurfaceView {
         mPlayer.setMpegListener(new VPlayerListener() {
             @Override
             public void onMediaPause(NotPlayingException err) {
-                if (mListener != null) {
+                if (mListener != null && !mAlreadyFinished) {
                     mListener.onMediaPause(err);
                 }
             }
             @Override
             public void onMediaResume(NotPlayingException result) {
-                if (mListener != null) {
+                if (mListener != null && !mAlreadyFinished) {
                     mListener.onMediaResume(result);
                 }
             }
             @Override
             public void onMediaSeeked(NotPlayingException result) {
-                if (mListener != null) {
+                if (mListener != null && !mAlreadyFinished) {
                     mListener.onMediaSeeked(result);
                 }
             }
@@ -89,14 +89,14 @@ public class VPlayerView extends VPlayerSurfaceView {
             }
             @Override
             public void onMediaStop() {
-                if (mListener != null) {
+                if (mListener != null && !mAlreadyFinished) {
                     mListener.onMediaStop();
                 }
             }
             @Override
             public void onMediaUpdateTime(long mCurrentTimeUs,
                     long mVideoDurationUs, boolean isFinished) {
-                if (mListener != null) {
+                if (mListener != null && !mAlreadyFinished) {
                     mListener.onMediaUpdateTime(mCurrentTimeUs, mVideoDurationUs, isFinished);
                 }
                 if (mShouldLoop && isFinished) {
