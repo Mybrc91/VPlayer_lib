@@ -215,7 +215,9 @@ public class VPlayerView extends VPlayerSurfaceView {
     }
 
     public void stop() {
-        pause();
+        if (!mAlreadyFinished) {
+            mPlayer.stop();
+        }
         seek(0);
     }
 
