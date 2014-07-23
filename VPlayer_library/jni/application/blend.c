@@ -16,6 +16,8 @@
  *
  */
 
+#ifdef SUBTITLES
+
 #include "blend.h"
 #include <android/log.h>
 
@@ -137,3 +139,4 @@ void blend_subrect_rgba(AVPicture *dest, const AVSubtitleRect *rect, int imgw,
 	}
 }
 
+#endif /* SUBTITLES */
