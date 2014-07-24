@@ -24,42 +24,40 @@ VPlayer into your project. I provide prebuilt binaries for the project.
 This is a very simple example that plays a video after starting the activity.
 You can view more integration tutorials [here](https://github.com/matthewn4444/VPlayer_lib/wiki/Integration-Tutorial).
 
-``java
-public class VideoActivity extends Activity {
-    private VPlayerView mPlayerView;
+    public class VideoActivity extends Activity {
+        private VPlayerView mPlayerView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
 
-        // Attach the player
-        mPlayerView = new VPlayerView(this);
-        setContentView(mPlayerView);
+            // Attach the player
+            mPlayerView = new VPlayerView(this);
+            setContentView(mPlayerView);
 
-        // Set the content and play the video
-        mPlayerView.setDataSource(path);
-        mPlayerView.play();
+            // Set the content and play the video
+            mPlayerView.setDataSource(path);
+            mPlayerView.play();
+        }
+
+        @Override
+        protected void onPause() {
+            super.onPause();
+            mPlayerView.onPause();
+        }
+
+        @Override
+        protected void onResume() {
+            super.onResume();
+            mPlayerView.onResume();
+        }
+
+        @Override
+        public void finish() {
+            super.finish();
+            mPlayerView.finish();
+        }
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mPlayerView.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPlayerView.onResume();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        mPlayerView.finish();
-    }
-}
-``
 
 ## Cloning and Building
 
