@@ -62,6 +62,7 @@ public class VideoActivity extends Activity {
             public void onMediaSourceLoaded(VPlayerException err, MediaStreamInfo[] streams) {
                 if (err != null) {
                     alert("Decode Error", "Unable to read the video!");
+                    err.printStackTrace();
                 } else {
                     // Get the display dimensions
                     Display display = getWindowManager().getDefaultDisplay();
