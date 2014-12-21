@@ -17,8 +17,6 @@
  */
 
 // Comment to ignore subtitles
-#define SUBTITLES
-
 #ifdef SUBTITLES
 #ifndef BLEND_H_
 #define BLEND_H_

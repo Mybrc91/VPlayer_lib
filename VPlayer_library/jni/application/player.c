@@ -66,8 +66,6 @@
 #define FALSE 0
 #define TRUE (!(FALSE))
 
-#define SUBTITLES
-
 #ifdef SUBTITLES
 #include "blend.h"
 #include <ass/ass.h>

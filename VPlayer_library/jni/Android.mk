@@ -24,6 +24,7 @@ include $(CLEAR_VARS)
 #           from the java code in VPlayerController.java
 FEATURE_NEON:=yes
 #LIBRARY_PROFILER:=yes
+SUBTITLES:=yes
 
 # add support for encryption
 MODULE_ENCRYPT:=yes
@@ -75,6 +76,11 @@ endif
 #ffmpeg-jni library
 include $(CLEAR_VARS)
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=false
+
+ifdef SUBTITLES
+LOCAL_CFLAGS := -DSUBTITLES
+endif
+
 LOCAL_MODULE := ffmpeg-jni
 LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/queue.c \
                    application/helpers.c application/jni-protocol.c application/blend.c \
