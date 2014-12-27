@@ -17,9 +17,66 @@
 
 if [ "$NDK" = "" ]; then
 	echo NDK variable not set, exiting
-	echo "Use NDK8 (only compiles with this): export NDK=/your/path/to/android-ndk"
+	echo "   Example: export NDK=/your/path/to/android-ndk"
 	exit 1
 fi
+
+# Check the Application.mk for the architectures we need to compile for
+while read line; do
+    if [[ $line =~ ^APP_ABI\ *?:= ]]; then
+        archs=(${line#*=})
+        if [[ " ${archs[*]} " == *" all "* ]]; then
+            build_all=true
+        fi
+        break
+    fi
+done <"../VPlayer_library/jni/Application.mk"
+if [ -z "$archs" ]; then
+    echo "Application.mk has not specified any architecture, please use 'APP_ABI:=<ARCH>'"
+    exit 1
+else
+    echo "Building for the following architectures: "${archs[@]}
+fi
+
+# Get the platform version from Application.mk
+PLATFORM_VERSION=9
+while read line; do
+    if [[ $line =~ ^APP_PLATFORM\ *?:= ]]; then
+        PLATFORM_VERSION=${line#*-}
+        break
+    fi
+done <"../VPlayer_library/jni/Application.mk"
+echo Trying to find $NDK/platforms/android-$PLATFORM_VERSION
+if [ ! -d "$NDK/platforms/android-$PLATFORM_VERSION" ]; then
+    echo "Android platform doesn't exist, try to find a lower version than" $PLATFORM_VERSION
+    while [ $PLATFORM_VERSION -gt 0 ]; do
+        if [ -d "$NDK/platforms/android-$PLATFORM_VERSION" ]; then
+            break
+        fi
+        let PLATFORM_VERSION=PLATFORM_VERSION-1
+    done
+    if [ ! -d "$NDK/platforms/android-$PLATFORM_VERSION" ]; then
+        echo Cannot find any valid Android platforms inside $NDK/platforms/
+        exit 1
+    fi
+fi
+echo Using Android platform from $NDK/platforms/android-$PLATFORM_VERSION
+PLATFORM_VERSION=android-$PLATFORM_VERSION
+
+# Get the newest arm-linux-androideabi version
+folders=$NDK/toolchains/arm-linux-androideabi-*
+for i in $folders; do
+    n=${i#*$NDK/toolchains/arm-linux-androideabi-}
+    reg='.*?[a-zA-Z].*?'
+    if ! [[ $n =~ $reg ]] ; then
+        TOOLCHAIN_VER=$n
+    fi
+done
+if [ ! -d $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER ]; then
+	echo $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER does not exist
+	exit 1
+fi
+echo Using $NDK/toolchains/{ARCH}-$TOOLCHAIN_VER
 
 OS=`uname -s | tr '[A-Z]' '[a-z]'`
 function build_x264
@@ -343,65 +400,99 @@ EOF
 function build_one {
 	cd ffmpeg
 	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	$PREBUILT/bin/$EABIARCH-ld -rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -L$PREFIX/lib  -soname $SONAME -shared -nostdlib  -z,noexecstack -Bsymbolic --whole-archive --no-undefined -o $OUT_LIBRARY -lavcodec -lavformat -lavresample -lavutil -lswresample -lass -lfreetype -lfribidi -lswscale -lvo-aacenc -lvo-amrwbenc -lc -lm -lz -ldl -llog  --warn-once  --dynamic-linker=/system/bin/linker -zmuldefs $PREBUILT/lib/gcc/$EABIARCH/4.4.3/libgcc.a || exit 1
+	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lz"
+
+	# Get all the object files inside FFMPEG
+	FFMPEG_OBJS="libavutil/ libavcodec/ libavcodec/$ARCH/ libavformat/ libswresample/ libswscale/ libavfilter/ compat/ libavutil/$ARCH/"
+	case $ARCH in
+		arm)
+			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/arm/"
+		;;
+		x86)
+			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/x86/ libswscale/x86/ libavfilter/x86/"
+		;;
+		# Default works with mips
+	esac
+
+	# Check each FFMPEG object path if they exist before adding them to the list
+	OBJS=
+	for path in $FFMPEG_OBJS; do
+		objs_path=$path"*.o"
+		if [ `ls -1 $objs_path 2>/dev/null | wc -l` -gt "0" ]; then
+			OBJS=$OBJS" "$objs_path
+		fi
+	done
+
+	# Finally package into shared library
+	rm libavcodec/inverse.o ../vo-aacenc/common/cmnMemory.o
+	$CC -o $OUT_LIBRARY -shared $LDFLAGS $EXTRA_LDFLAGS $OBJS \
+		  $(find ../ -name "*.o" -not -path "../ffmpeg/*" | tr '\n' ' ')
+	$PREBUILT/bin/$EABIARCH-strip --strip-unneeded $OUT_LIBRARY
 	cd ..
 }
 
 #arm v5
-#EABIARCH=arm-linux-androideabi
-#ARCH=arm
-#CPU=armv5
-#OPTIMIZE_CFLAGS="-marm -march=$CPU"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi
-#OUT_LIBRARY=$PREFIX/libffmpeg.so
-#ADDITIONAL_CONFIGURE_FLAG=
-#SONAME=libffmpeg.so
-#PREBUILT=$NDK/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$OS-x86
-#PLATFORM_VERSION=android-5
-#build_amr
-#build_aac
-#build_fribidi
-#build_freetype2
-#build_ass
-#build_ffmpeg
-#build_one
-MIZE_CFLAGS="-m32"
+if [[ " ${archs[*]} " == *" armeabi "* ]] || [ "$build_all" = true ]; then
+EABIARCH=arm-linux-androideabi
+ARCH=arm
+CPU=armv5
+OPTIMIZE_CFLAGS="-marm -march=$CPU"
+PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi
+OUT_LIBRARY=$PREFIX/libffmpeg.so
+ADDITIONAL_CONFIGURE_FLAG=
+SONAME=libffmpeg.so
+PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_amr
+build_aac
+build_fribidi
+build_freetype2
+build_ass
+build_ffmpeg
+build_one
+fi
+
 #x86
-#EABIARCH=i686-linux-android
-#ARCH=x86
-#OPTIMIZE_CFLAGS="-m32"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/x86
-#OUT_LIBRARY=$PREFIX/libffmpeg.so
-#ADDITIONAL_CONFIGURE_FLAG=--disable-asm
-#SONAME=libffmpeg.so
-#PREBUILT=$NDK/toolchains/x86-4.4.3/prebuilt/$OS-x86
-#PLATFORM_VERSION=android-9
-#build_amr
-#build_aac
-#build_fribidi
-#build_freetype2
-#build_ass
-#build_ffmpeg
-#build_one
+if [[ " ${archs[*]} " == *" x86 "* ]] || [ "$build_all" = true ]; then
+EABIARCH=i686-linux-android
+ARCH=x86
+OPTIMIZE_CFLAGS="-m32"
+PREFIX=../../VPlayer_library/jni/ffmpeg-build/x86
+OUT_LIBRARY=$PREFIX/libffmpeg.so
+ADDITIONAL_CONFIGURE_FLAG=--disable-asm
+SONAME=libffmpeg.so
+PREBUILT=$NDK/toolchains/x86-$TOOLCHAIN_VER/prebuilt/$OS-x86
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_amr
+build_aac
+build_fribidi
+build_freetype2
+build_ass
+build_ffmpeg
+build_one
+fi
 
 #mips
-#EABIARCH=mipsel-linux-android
-#ARCH=mips
-#OPTIMIZE_CFLAGS="-EL -march=mips32 -mips32 -mhard-float"
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/mips
-#OUT_LIBRARY=$PREFIX/libffmpeg.so
-#ADDITIONAL_CONFIGURE_FLAG="--disable-mips32r2"
-#SONAME=libffmpeg.so
-#PREBUILT=$NDK/toolchains/mipsel-linux-android-4.4.3/prebuilt/$OS-x86
-#PLATFORM_VERSION=android-9
-#build_amr
-#build_aac
-#build_fribidi
-#build_freetype2
-#build_ass
-#build_ffmpeg
-#build_one
+if [[ " ${archs[*]} " == *" mips "* ]] || [ "$build_all" = true ]; then
+EABIARCH=mipsel-linux-android
+ARCH=mips
+OPTIMIZE_CFLAGS="-EL -march=mips32 -mips32 -mhard-float"
+PREFIX=../../VPlayer_library/jni/ffmpeg-build/mips
+OUT_LIBRARY=$PREFIX/libffmpeg.so
+ADDITIONAL_CONFIGURE_FLAG="--disable-mips32r2"
+SONAME=libffmpeg.so
+PREBUILT=$NDK/toolchains/mipsel-linux-android-$TOOLCHAIN_VER/prebuilt/$OS-x86
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_amr
+build_aac
+build_fribidi
+build_freetype2
+build_ass
+build_ffmpeg
+build_one
+fi
 
+if [[ " ${archs[*]} " == *" armeabi-v7a "* ]] || [ "$build_all" = true ]; then
 #arm v7vfpv3
 EABIARCH=arm-linux-androideabi
 ARCH=arm
@@ -411,8 +502,9 @@ PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a
 OUT_LIBRARY=$PREFIX/libffmpeg.so
 ADDITIONAL_CONFIGURE_FLAG=
 SONAME=libffmpeg.so
-PREBUILT=$NDK/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$OS-x86
-PLATFORM_VERSION=android-5
+EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
+PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 build_amr
 build_aac
 build_fribidi
@@ -422,22 +514,22 @@ build_ffmpeg
 build_one
 
 #arm v7 + neon (neon also include vfpv3-32)
-#EABIARCH=arm-linux-androideabi
-#ARCH=arm
-#CPU=armv7-a
-#OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=neon -marm -march=$CPU -mtune=cortex-a8 -mthumb -D__thumb__ "
-#PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a-neon
-#OUT_LIBRARY=../ffmpeg-build/armeabi-v7a/libffmpeg-neon.so
-#ADDITIONAL_CONFIGURE_FLAG=--enable-neon
-#SONAME=libffmpeg-neon.so
-#PREBUILT=$NDK/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$OS-x86
-#PLATFORM_VERSION=android-9
-#build_amr
-#build_aac
-#build_fribidi
-#build_freetype2
-#build_ass
-#build_ffmpeg
-#build_one
-#build_one
-
+EABIARCH=arm-linux-androideabi
+ARCH=arm
+CPU=armv7-a
+OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=neon -marm -march=$CPU -mtune=cortex-a8 -mthumb -D__thumb__ "
+PREFIX=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a-neon
+OUT_LIBRARY=../../VPlayer_library/jni/ffmpeg-build/armeabi-v7a/libffmpeg-neon.so
+ADDITIONAL_CONFIGURE_FLAG=--enable-neon
+SONAME=libffmpeg-neon.so
+EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
+PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_amr
+build_aac
+build_fribidi
+build_freetype2
+build_ass
+build_ffmpeg
+build_one
+fi
