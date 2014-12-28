@@ -77,6 +77,8 @@
 // 10000 ms = 1s
 #define MIN_SLEEP_TIME_MS 2
 
+#define MAX_AUDIO_FRAME_SIZE 192000
+
 //#define MEASURE_TIME
 
 #ifdef MEASURE_TIME
@@ -207,7 +209,7 @@ struct Player {
 	struct SwsContext *sws_context;
 
 	struct SwrContext *swr_context;
-	DECLARE_ALIGNED(16,uint8_t,audio_buf2)[AVCODEC_MAX_AUDIO_FRAME_SIZE * 4];
+	DECLARE_ALIGNED(16,uint8_t,audio_buf2)[MAX_AUDIO_FRAME_SIZE * 4];
 
 	int playing;
 
@@ -511,7 +513,7 @@ static void player_print_subtitle(AVSubtitle *sub, int64_t time) {
 		LOGI(3, "player_decode_subtitles --rect->ass = %s", rect->ass);
 		LOGI(3,
 				"player_decode_subtitles --rect->forced = %s",
-				rect->forced ? "true" : "false");
+				rect->flags & AV_SUBTITLE_FLAG_FORCED != 0 ? "true" : "false");
 		char *type = "undefined";
 		if (rect->type == SUBTITLE_NONE) {
 			type = "none";
@@ -524,7 +526,7 @@ static void player_print_subtitle(AVSubtitle *sub, int64_t time) {
 		}
 		LOGI(3, "player_decode_subtitles --rect->type = %s", type);
 	}
-	LOGI(3, "player_decode_subtitles sub.pts: %d", sub->pts);
+	LOGI(3, "player_decode_subtitles sub.pts: %"PRId64, sub->pts);
 }
 void player_decode_subtitles_flush(struct DecoderData * decoder_data,
 		JNIEnv * env) {
@@ -723,10 +725,10 @@ enum WaitFuncRet player_wait_for_frame(struct Player *player, int64_t stream_tim
 		int64_t current_video_time = player_get_current_video_time(player);
 
 		LOGI(8,
-				"player_wait_for_frame[%d = %s] = (%f) - (%f)",
+				"player_wait_for_frame[%d = %s] = (%"PRId64") - (%f)",
 				stream_no,
 				player->video_stream_no == stream_no ? "Video" : "Audio",
-						stream_time, current_video_time/1000000.0);
+						stream_time, (float)(current_video_time/1000000.0));
 
 		int64_t sleep_time = stream_time - current_video_time;
 
@@ -1363,7 +1365,7 @@ void * player_read_from_stream(void *data) {
 				player->seek_position, AV_TIME_BASE_Q,
 				seek_input_stream->time_base);
 		LOGI(3, "player_read_from_stream seeking to: "
-		"%ds, time_base: %f", player->seek_position / 1000000.0, seek_target);
+		"%ds, time_base: %"PRId64, (int)round(player->seek_position / 1000000.0), seek_target);
 
 		// seeking
 		if (av_seek_frame(player->input_format_ctx, seek_input_stream_number,
@@ -1783,7 +1785,7 @@ void player_print_video_informations(struct Player *player,
 					!= NULL) {
 				LOGI(3, "--- %s = %s", tag->key, tag->value);
 			}
-			LOGI(3, "-- codec_name: %s", codec->codec_name);
+			LOGI(3, "-- codec_name: %s", codec->codec->name);
 			char *codec_type = "other";
 			if (codec->codec_type == AVMEDIA_TYPE_AUDIO) {
 				codec_type = "audio";
@@ -1819,7 +1821,7 @@ int player_alloc_frames(struct Player *player) {
 	int capture_streams_no = player->caputre_streams_no;
 	int stream_no;
 	for (stream_no = 0; stream_no < capture_streams_no; ++stream_no) {
-		player->input_frames[stream_no] = avcodec_alloc_frame();
+		player->input_frames[stream_no] = av_frame_alloc();
 		if (player->input_frames[stream_no] == NULL) {
 			return -ERROR_COULD_NOT_ALLOC_FRAME;
 		}
@@ -1994,7 +1996,7 @@ void player_get_video_duration(struct Player *player) {
 			player->video_duration = av_rescale_q(
 					stream->duration, stream->time_base, AV_TIME_BASE_Q);
 			LOGI(3,
-					"player_set_data_source stream[%d] duration: %ld",
+					"player_set_data_source stream[%d] duration: %"PRId64,
 					i, stream->duration);
 			return;
 		}
@@ -2002,7 +2004,7 @@ void player_get_video_duration(struct Player *player) {
 	if (player->input_format_ctx->duration != 0) {
 		player->video_duration = player->input_format_ctx->duration;
 		LOGI(3,
-				"player_set_data_source video duration: %ld",
+				"player_set_data_source video duration: %"PRId64,
 				player->input_format_ctx->duration)
 		return;
 	}
@@ -2013,7 +2015,7 @@ void player_get_video_duration(struct Player *player) {
 			player->video_duration = av_rescale_q(stream->duration,
 					stream->time_base, AV_TIME_BASE_Q);
 			LOGI(3,
-					"player_set_data_source stream[%d] duration: %ld", i, stream->duration);
+					"player_set_data_source stream[%d] duration: %"PRId64, i, stream->duration);
 			return;
 		}
 	}
@@ -2218,18 +2220,18 @@ int player_prepare_ass_decoder(struct Player* player, const char *font_path) {
 
 
 int player_alloc_video_frames(struct Player *player) {
-	player->rgb_frame = avcodec_alloc_frame();
+	player->rgb_frame = av_frame_alloc();
 	if (player->rgb_frame == NULL) {
 		LOGE(1, "player_alloc_video_frames could not allocate rgb_frame");
 		return -1;
 	}
 
-	player->tmp_frame = avcodec_alloc_frame();
+	player->tmp_frame = av_frame_alloc();
 	if (player->tmp_frame == NULL) {
 		LOGE(1, "player_alloc_video_frames could not allocate tmp_frame");
 		return -1;
 	}
-	player->tmp_frame2 = avcodec_alloc_frame();
+	player->tmp_frame2 = av_frame_alloc();
 	if (player->tmp_frame2 == NULL) {
 		LOGE(1, "player_alloc_video_frames could not allocate tmp_frame2");
 		return -1;
@@ -2256,15 +2258,15 @@ int player_alloc_video_frames(struct Player *player) {
 
 void player_alloc_video_frames_free(struct Player *player) {
 	if (player->rgb_frame != NULL) {
-		avcodec_free_frame(&player->rgb_frame);
+		av_frame_free(&player->rgb_frame);
 		player->rgb_frame = NULL;
 	}
 	if (player->tmp_frame != NULL) {
-		avcodec_free_frame(&player->tmp_frame);
+		av_frame_free(&player->tmp_frame);
 		player->tmp_frame = NULL;
 	}
 	if (player->tmp_frame2 != NULL) {
-		avcodec_free_frame(&player->tmp_frame2);
+		av_frame_free(&player->tmp_frame2);
 		player->tmp_frame2 = NULL;
 	}
 	if (player->tmp_buffer != NULL) {

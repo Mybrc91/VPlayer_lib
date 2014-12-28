@@ -406,7 +406,7 @@ function build_one {
 	FFMPEG_OBJS="libavutil/ libavcodec/ libavcodec/$ARCH/ libavformat/ libswresample/ libswscale/ libavfilter/ compat/ libavutil/$ARCH/"
 	case $ARCH in
 		arm)
-			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/arm/"
+			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/arm/ libavcodec/neon/"
 		;;
 		x86)
 			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/x86/ libswscale/x86/ libavfilter/x86/"
@@ -424,9 +424,10 @@ function build_one {
 	done
 
 	# Finally package into shared library
-	rm libavcodec/inverse.o ../vo-aacenc/common/cmnMemory.o
-	$CC -o $OUT_LIBRARY -shared $LDFLAGS $EXTRA_LDFLAGS $OBJS \
-		  $(find ../ -name "*.o" -not -path "../ffmpeg/*" | tr '\n' ' ')
+	rm -f libavcodec/inverse.o ../vo-aacenc/common/cmnMemory.o
+	$CC -o $OUT_LIBRARY -shared -nostdlib -Wl,-z,noexecstack -Bsymbolic $LDFLAGS $EXTRA_LDFLAGS $OBJS \
+		  $(find ../ -name "*.o" -not -path "../ffmpeg/*" | tr '\n' ' ') \
+          -zmuldefs $PREBUILT/lib/gcc/$EABIARCH/$TOOLCHAIN_VER/libgcc.a
 	$PREBUILT/bin/$EABIARCH-strip --strip-unneeded $OUT_LIBRARY
 	cd ..
 }
