@@ -31,8 +31,6 @@ MODULE_ENCRYPT:=yes
 
 
 
-
-
 #if armeabi-v7a
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     ifdef FEATURE_NEON
@@ -77,10 +75,6 @@ endif
 include $(CLEAR_VARS)
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=false
 
-ifdef SUBTITLES
-LOCAL_CFLAGS := -DSUBTITLES
-endif
-
 LOCAL_MODULE := ffmpeg-jni
 LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/queue.c \
                    application/helpers.c application/jni-protocol.c application/blend.c \
@@ -88,6 +82,10 @@ LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/que
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
                     $(LOCAL_PATH)/application
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt
+
+ifdef SUBTITLES
+LOCAL_CFLAGS += -DSUBTITLES
+endif
 
 #if enabled profiler add it
 ifdef LIBRARY_PROFILER
@@ -125,6 +123,10 @@ LOCAL_SRC_FILES := application/ffmpeg-jni.c application/player.c application/que
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/ffmpeg-build/$(TARGET_ARCH_ABI)/include \
                     $(LOCAL_PATH)/application
 LOCAL_SHARED_LIBRARY := ffmpeg-prebuilt-neon
+
+ifdef SUBTITLES
+LOCAL_CFLAGS += -DSUBTITLES
+endif
 
 #if enabled profiler add it
 ifdef LIBRARY_PROFILER
