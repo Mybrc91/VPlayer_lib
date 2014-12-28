@@ -155,7 +155,6 @@ include $(BUILD_SHARED_LIBRARY)
 endif
 
 #nativetester-jni library
-ifdef FEATURE_NEON
 include $(CLEAR_VARS)
 
 ifdef FEATURE_VFPV3
@@ -172,7 +171,6 @@ LOCAL_SRC_FILES := application/nativetester-jni.c application/nativetester.c
 LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_LDLIBS  := -llog
 include $(BUILD_SHARED_LIBRARY)
-endif
 
 #includes
 ifdef MODULE_ENCRYPT
