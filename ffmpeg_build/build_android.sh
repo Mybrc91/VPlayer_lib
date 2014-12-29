@@ -96,13 +96,13 @@ function build_x264
 	export STRIP="${CROSS_COMPILE}strip"
 	export RANLIB="${CROSS_COMPILE}ranlib"
 	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
+	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
 
-	cd x264
-	./configure --prefix=$(pwd)/$PREFIX --host=$ARCH-linux --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
-
+    cd x264
+    ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
+    find common -name "*.o" -type f -delete
 	make clean || exit 1
-	make -j4 install || exit 1
+	make STRIP= -j4 install || exit 1
 	cd ..
 }
 
@@ -377,6 +377,8 @@ EOF
 	    --enable-avcodec \
 	    --enable-avresample \
 	    --enable-zlib \
+        --enable-gpl \
+        --enable-libx264 \
 	    --disable-doc \
 	    --disable-ffplay \
 	    --disable-ffmpeg \
@@ -464,6 +466,7 @@ ADDITIONAL_CONFIGURE_FLAG=--disable-asm
 SONAME=libffmpeg.so
 PREBUILT=$NDK/toolchains/x86-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_x264
 build_amr
 build_aac
 build_fribidi
@@ -484,6 +487,7 @@ ADDITIONAL_CONFIGURE_FLAG="--disable-mips32r2"
 SONAME=libffmpeg.so
 PREBUILT=$NDK/toolchains/mipsel-linux-android-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_x264
 build_amr
 build_aac
 build_fribidi
@@ -506,6 +510,7 @@ SONAME=libffmpeg.so
 EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
 PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_x264
 build_amr
 build_aac
 build_fribidi
@@ -526,6 +531,7 @@ SONAME=libffmpeg-neon.so
 EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
 PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_x264
 build_amr
 build_aac
 build_fribidi
