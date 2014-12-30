@@ -29,6 +29,12 @@ ENABLE_X264=yes
 #       Default takes the highest toolchain version from NDK
 # TOOLCHAIN_VER=4.6
 
+#   Use fdk-aac instead of vo-amrwbenc
+#       Default uses vo-amrwbenc and it is worse than fdk-aac but
+#       because of licensing, it requires you to build FFmpeg from
+#       scratch if you want to use fdk-aac. Uncomment to use fdk-aac
+PREFER_FDK_AAC=yes
+
 #
 # =======================================================================
 
@@ -181,7 +187,18 @@ function build_aac
     export AR="${CROSS_COMPILE}ar"
     export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
 
-    cd vo-aacenc
+    if [ ! -z "$PREFER_FDK_AAC" ]; then
+        echo "Using fdk-aac encoder for AAC"
+        find vo-aacenc/ -name "*.o" -type f -delete
+        ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-libfdk_aac"
+        cd fdk-aac
+    else
+        echo "Using vo-aacenc encoder for AAC"
+        find fdk-aac/ -name "*.o" -type f -delete
+        ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-libvo-aacenc"
+        cd vo-aacenc
+    fi
+
     export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
     export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
     ./configure \
@@ -372,7 +389,6 @@ EOF
         --extra-cflags="-I$PREFIX/include" \
         --disable-everything \
         --enable-libass \
-        --enable-libvo-aacenc \
         --enable-libvo-amrwbenc \
         --enable-hwaccel=h264_vaapi \
         --enable-hwaccel=h264_vaapi \

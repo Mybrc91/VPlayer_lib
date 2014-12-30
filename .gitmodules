@@ -25,3 +25,6 @@
 [submodule "ffmpeg_build/libpng"]
 	path = ffmpeg_build/libpng
 	url = git://git.code.sf.net/p/libpng/code
+[submodule "ffmpeg_build/fdk-aac"]
+	path = ffmpeg_build/fdk-aac
+	url = git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/fdk-aac

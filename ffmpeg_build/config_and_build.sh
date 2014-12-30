@@ -47,6 +47,11 @@ addAutomakeOpts
 autoreconf -ivf
 cd ..
 
+# fdk-aac environment
+cd fdk-aac
+sh ./autogen.sh
+cd ..
+
 # Start the build!
 source build_android.sh
 
