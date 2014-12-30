@@ -18,6 +18,7 @@
 if [ "$NDK" = "" ]; then
 	echo NDK variable not set, exiting
 	echo "   Example: export NDK=/your/path/to/android-ndk"
+	echo "   Then run ./build_android.sh"
 	exit 1
 fi
 

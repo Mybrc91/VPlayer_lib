@@ -1,10 +1,4 @@
 #!/bin/bash
-
-# Change location to the NDK8 folder
-if [ "$NDK" = "" ]; then
-    export NDK=~/Projects/ndk-8
-fi
-
 GIT_SSL_NO_VERIFY=true
 
 function addAutomakeOpts() {
