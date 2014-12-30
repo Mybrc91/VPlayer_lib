@@ -13,7 +13,7 @@
 [submodule "FFmpegLibrary/jni/fribidi"]
 	path = ffmpeg_build/fribidi
 	url = git@github.com:matthewn4444/fribidi.git
-[submodule "FFmpegLibrary/jni/freetype2"]
+[submodule "ffmpeg_build/freetype2"]
 	path = ffmpeg_build/freetype2
 	url = git://git.sv.gnu.org/freetype/freetype2.git
 [submodule "ffmpeg_build/x264"]
@@ -22,3 +22,6 @@
 [submodule "VPlayer_library/jni/tropicssl"]
 	path = VPlayer_library/jni/tropicssl
 	url = https://review.appunite.com/tropicssl.git
+[submodule "ffmpeg_build/libpng"]
+	path = ffmpeg_build/libpng
+	url = git://git.code.sf.net/p/libpng/code

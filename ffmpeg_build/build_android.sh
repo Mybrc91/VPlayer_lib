@@ -177,6 +177,39 @@ function build_aac
     make -j4 install || exit 1
     cd ..
 }
+function build_png
+{
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS=$OPTIMIZE_CFLAGS
+#CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog -lgcc"
+
+    cd libpng
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
+
+    make clean || exit 1
+    make -j4 install || exit 1
+    cd ..
+}
 function build_freetype2
 {
     PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
@@ -209,6 +242,7 @@ function build_freetype2
         || exit 1
 
     make clean || exit 1
+    make -j4 || exit 1
     make -j4 install || exit 1
     cd ..
 }
@@ -451,6 +485,7 @@ find x264/ -name "*.o" -type f -delete
 build_amr
 build_aac
 build_fribidi
+build_png
 build_freetype2
 build_ass
 build_ffmpeg
@@ -472,6 +507,7 @@ build_x264
 build_amr
 build_aac
 build_fribidi
+build_png
 build_freetype2
 build_ass
 build_ffmpeg
@@ -493,6 +529,7 @@ build_x264
 build_amr
 build_aac
 build_fribidi
+build_png
 build_freetype2
 build_ass
 build_ffmpeg
@@ -516,6 +553,7 @@ build_x264
 build_amr
 build_aac
 build_fribidi
+build_png
 build_freetype2
 build_ass
 build_ffmpeg
@@ -537,6 +575,7 @@ build_x264
 build_amr
 build_aac
 build_fribidi
+build_png
 build_freetype2
 build_ass
 build_ffmpeg

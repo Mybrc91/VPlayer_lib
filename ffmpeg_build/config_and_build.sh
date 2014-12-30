@@ -16,6 +16,11 @@ cd ffmpeg_build
 svn checkout http://libyuv.googlecode.com/svn/trunk/ ../VPlayer_library/jni/libyuv
 
 # configure the environment
+cd libpng
+sh ./autogen.sh
+cd ..
+
+# configure the environment
 cd freetype2
 sh ./autogen.sh
 cd ..
