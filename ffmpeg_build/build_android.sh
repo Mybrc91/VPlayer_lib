@@ -86,6 +86,7 @@ function build_x264
 	export PATH=${PATH}:$PREBUILT/bin/
 	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
 	CFLAGS=$OPTIMIZE_CFLAGS
+	ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-gpl --enable-libx264"
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
 	export CPPFLAGS="$CFLAGS"
 	export CFLAGS="$CFLAGS"
@@ -100,8 +101,8 @@ function build_x264
 	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
 
     cd x264
+    find . -name "*.o" -type f -delete
     ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
-    find common -name "*.o" -type f -delete
 	make clean || exit 1
 	make STRIP= -j4 install || exit 1
 	cd ..
@@ -378,8 +379,6 @@ EOF
 	    --enable-avcodec \
 	    --enable-avresample \
 	    --enable-zlib \
-        --enable-gpl \
-        --enable-libx264 \
 	    --disable-doc \
 	    --disable-ffplay \
 	    --disable-ffmpeg \
@@ -447,6 +446,8 @@ ADDITIONAL_CONFIGURE_FLAG=
 SONAME=libffmpeg.so
 PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+# If you want x264, compile armv6
+find x264/ -name "*.o" -type f -delete
 build_amr
 build_aac
 build_fribidi
