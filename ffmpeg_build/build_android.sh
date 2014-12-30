@@ -16,10 +16,10 @@
 # limitations under the License.
 
 if [ "$NDK" = "" ]; then
-	echo NDK variable not set, exiting
-	echo "   Example: export NDK=/your/path/to/android-ndk"
-	echo "   Then run ./build_android.sh"
-	exit 1
+    echo NDK variable not set, exiting
+    echo "   Example: export NDK=/your/path/to/android-ndk"
+    echo "   Then run ./build_android.sh"
+    exit 1
 fi
 
 # Check the Application.mk for the architectures we need to compile for
@@ -74,364 +74,364 @@ for i in $folders; do
     fi
 done
 if [ ! -d $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER ]; then
-	echo $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER does not exist
-	exit 1
+    echo $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER does not exist
+    exit 1
 fi
 echo Using $NDK/toolchains/{ARCH}-$TOOLCHAIN_VER
 
 OS=`uname -s | tr '[A-Z]' '[a-z]'`
 function build_x264
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS=$OPTIMIZE_CFLAGS
-	ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-gpl --enable-libx264"
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS=$OPTIMIZE_CFLAGS
+    ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-gpl --enable-libx264"
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export AS="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export AS="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
 
     cd x264
     find . -name "*.o" -type f -delete
     ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
-	make clean || exit 1
-	make STRIP= -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make STRIP= -j4 install || exit 1
+    cd ..
 }
 
 function build_amr
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS=$OPTIMIZE_CFLAGS
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS=$OPTIMIZE_CFLAGS
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
 
-	cd vo-amrwbenc
-	./configure \
-	    --prefix=$(pwd)/$PREFIX \
-	    --host=$ARCH-linux \
-	    --disable-dependency-tracking \
-	    --disable-shared \
-	    --enable-static \
-	    --with-pic \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
+    cd vo-amrwbenc
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
 
-	make clean || exit 1
-	make -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make -j4 install || exit 1
+    cd ..
 }
 
 function build_aac
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS=$OPTIMIZE_CFLAGS
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS=$OPTIMIZE_CFLAGS
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
 
-	cd vo-aacenc
-	export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
-	export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
-	./configure \
-	    --prefix=$(pwd)/$PREFIX \
-	    --host=$ARCH-linux \
-	    --disable-dependency-tracking \
-	    --disable-shared \
-	    --enable-static \
-	    --with-pic \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
+    cd vo-aacenc
+    export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
+    export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
 
-	make clean || exit 1
-	make -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make -j4 install || exit 1
+    cd ..
 }
 function build_freetype2
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS=$OPTIMIZE_CFLAGS
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS=$OPTIMIZE_CFLAGS
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog"
 
-	cd freetype2
-	export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
-	export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
-	./configure \
-	    --prefix=$(pwd)/$PREFIX \
-	    --host=$ARCH-linux \
-	    --disable-dependency-tracking \
-	    --disable-shared \
-	    --enable-static \
-	    --with-pic \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
+    cd freetype2
+    export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
+    export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
 
-	make clean || exit 1
-	make -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make -j4 install || exit 1
+    cd ..
 }
 function build_ass
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS="$OPTIMIZE_CFLAGS"
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS="$OPTIMIZE_CFLAGS"
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog"
 
-	cd libass
-	export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
-	export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
-	./configure \
-	    --prefix=$(pwd)/$PREFIX \
-	    --host=$ARCH-linux \
-	    --disable-fontconfig \
-	    --disable-dependency-tracking \
-	    --disable-shared \
-	    --enable-static \
-	    --with-pic \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
+    cd libass
+    export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
+    export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-fontconfig \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
 
-	make clean || exit 1
-	make V=1 -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make V=1 -j4 install || exit 1
+    cd ..
 }
 function build_fribidi
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export PATH=${PATH}:$PREBUILT/bin/
-	CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-	CFLAGS="$OPTIMIZE_CFLAGS -std=gnu99"
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export PATH=${PATH}:$PREBUILT/bin/
+    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+    CFLAGS="$OPTIMIZE_CFLAGS -std=gnu99"
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-	export CPPFLAGS="$CFLAGS"
-	export CFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-	export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-	export NM="${CROSS_COMPILE}nm"
-	export STRIP="${CROSS_COMPILE}strip"
-	export RANLIB="${CROSS_COMPILE}ranlib"
-	export AR="${CROSS_COMPILE}ar"
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
+    export CPPFLAGS="$CFLAGS"
+    export CFLAGS="$CFLAGS"
+    export CXXFLAGS="$CFLAGS"
+    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+    export NM="${CROSS_COMPILE}nm"
+    export STRIP="${CROSS_COMPILE}strip"
+    export RANLIB="${CROSS_COMPILE}ranlib"
+    export AR="${CROSS_COMPILE}ar"
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog"
 
-	cd fribidi
-	./configure \
-	    --prefix=$(pwd)/$PREFIX \
-	    --host=$ARCH-linux \
-	    --disable-bin \
-	    --disable-dependency-tracking \
-	    --disable-shared \
-	    --enable-static \
-	    --with-pic \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
+    cd fribidi
+    ./configure \
+        --prefix=$(pwd)/$PREFIX \
+        --host=$ARCH-linux \
+        --disable-bin \
+        --disable-dependency-tracking \
+        --disable-shared \
+        --enable-static \
+        --with-pic \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
 
-	make clean || exit 1
-	make -j4 install || exit 1
-	cd ..
+    make clean || exit 1
+    make -j4 install || exit 1
+    cd ..
 }
 function build_ffmpeg
 {
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	CC=$PREBUILT/bin/$EABIARCH-gcc
-	CROSS_PREFIX=$PREBUILT/bin/$EABIARCH-
-	PKG_CONFIG=${CROSS_PREFIX}pkg-config
-	if [ ! -f $PKG_CONFIG ];
-	then
-		cat > $PKG_CONFIG << EOF
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    CC=$PREBUILT/bin/$EABIARCH-gcc
+    CROSS_PREFIX=$PREBUILT/bin/$EABIARCH-
+    PKG_CONFIG=${CROSS_PREFIX}pkg-config
+    if [ ! -f $PKG_CONFIG ];
+    then
+        cat > $PKG_CONFIG << EOF
 #!/bin/bash
 pkg-config \$*
 EOF
-		chmod u+x $PKG_CONFIG
-	fi
-	NM=$PREBUILT/bin/$EABIARCH-nm
-	cd ffmpeg
-	export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
-	export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
-	./configure --target-os=linux \
-	    --prefix=$PREFIX \
-	    --enable-cross-compile \
-	    --extra-libs="-lgcc" \
-	    --arch=$ARCH \
-	    --cc=$CC \
-	    --cross-prefix=$CROSS_PREFIX \
-	    --nm=$NM \
-	    --sysroot=$PLATFORM \
-	    --extra-cflags=" -O3 -fpic -DANDROID -DHAVE_SYS_UIO_H=1 -Dipv6mr_interface=ipv6mr_ifindex -fasm -Wno-psabi -fno-short-enums  -fno-strict-aliasing -finline-limit=300 $OPTIMIZE_CFLAGS " \
-	    --disable-shared \
-	    --enable-static \
-	    --enable-runtime-cpudetect \
-	    --extra-ldflags="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog -L$PREFIX/lib" \
-	    --extra-cflags="-I$PREFIX/include" \
-	    --disable-everything \
-	    --enable-libass \
-	    --enable-libvo-aacenc \
-	    --enable-libvo-amrwbenc \
-	    --enable-hwaccel=h264_vaapi \
-	    --enable-hwaccel=h264_vaapi \
-	    --enable-hwaccel=h264_dxva2 \
-	    --enable-hwaccel=mpeg4_vaapi \
-	    --enable-demuxer=mov \
-	    --enable-demuxer=h264 \
-	    --enable-demuxer=mpegvideo \
-	    --enable-demuxer=h263 \
-	    --enable-demuxer=mpegps \
-	    --enable-demuxer=mjpeg \
-	    --enable-demuxer=rtsp \
-	    --enable-demuxer=rtp \
-	    --enable-demuxer=hls \
-	    --enable-demuxer=matroska \
-	    --enable-muxer=rtsp \
-	    --enable-muxer=mp4 \
-	    --enable-muxer=mov \
-	    --enable-muxer=mjpeg \
-	    --enable-muxer=matroska \
-	    --enable-protocol=crypto \
-	    --enable-protocol=jni \
-	    --enable-protocol=file \
-	    --enable-protocol=rtp \
-	    --enable-protocol=tcp \
-	    --enable-protocol=udp \
-	    --enable-protocol=applehttp \
-	    --enable-protocol=hls \
-	    --enable-protocol=http \
-	    --enable-decoder=xsub \
-	    --enable-decoder=jacosub \
-	    --enable-decoder=dvdsub \
-	    --enable-decoder=dvbsub \
-	    --enable-decoder=subviewer \
-	    --enable-decoder=rawvideo \
-	    --enable-encoder=rawvideo \
-	    --enable-decoder=mjpeg \
-	    --enable-encoder=mjpeg \
-	    --enable-decoder=h263 \
-	    --enable-decoder=mpeg4 \
-	    --enable-encoder=mpeg4 \
-	    --enable-decoder=h264 \
-	    --enable-encoder=h264 \
-	    --enable-decoder=aac \
-	    --enable-encoder=aac \
-	    --enable-parser=h264 \
-	    --enable-encoder=mp2 \
-	    --enable-decoder=mp2 \
-	    --enable-encoder=libvo_amrwbenc \
-	    --enable-decoder=amrwb \
-	    --enable-muxer=mp2 \
-	    --enable-bsfs \
-	    --enable-decoders \
-	    --enable-encoders \
-	    --enable-parsers \
-	    --enable-hwaccels \
-	    --enable-muxers \
-	    --enable-avformat \
-	    --enable-avcodec \
-	    --enable-avresample \
-	    --enable-zlib \
-	    --disable-doc \
-	    --disable-ffplay \
-	    --disable-ffmpeg \
-	    --disable-ffplay \
-	    --disable-ffprobe \
-	    --disable-ffserver \
-	    --disable-avfilter \
-	    --disable-avdevice \
-	    --enable-nonfree \
-	    --enable-version3 \
-	    --enable-memalign-hack \
-	    --enable-asm \
-	    $ADDITIONAL_CONFIGURE_FLAG \
-	    || exit 1
-	make clean || exit 1
-	make -j4 install || exit 1
+        chmod u+x $PKG_CONFIG
+    fi
+    NM=$PREBUILT/bin/$EABIARCH-nm
+    cd ffmpeg
+    export PKG_CONFIG_LIBDIR=$(pwd)/$PREFIX/lib/pkgconfig/
+    export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
+    ./configure --target-os=linux \
+        --prefix=$PREFIX \
+        --enable-cross-compile \
+        --extra-libs="-lgcc" \
+        --arch=$ARCH \
+        --cc=$CC \
+        --cross-prefix=$CROSS_PREFIX \
+        --nm=$NM \
+        --sysroot=$PLATFORM \
+        --extra-cflags=" -O3 -fpic -DANDROID -DHAVE_SYS_UIO_H=1 -Dipv6mr_interface=ipv6mr_ifindex -fasm -Wno-psabi -fno-short-enums  -fno-strict-aliasing -finline-limit=300 $OPTIMIZE_CFLAGS " \
+        --disable-shared \
+        --enable-static \
+        --enable-runtime-cpudetect \
+        --extra-ldflags="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog -L$PREFIX/lib" \
+        --extra-cflags="-I$PREFIX/include" \
+        --disable-everything \
+        --enable-libass \
+        --enable-libvo-aacenc \
+        --enable-libvo-amrwbenc \
+        --enable-hwaccel=h264_vaapi \
+        --enable-hwaccel=h264_vaapi \
+        --enable-hwaccel=h264_dxva2 \
+        --enable-hwaccel=mpeg4_vaapi \
+        --enable-demuxer=mov \
+        --enable-demuxer=h264 \
+        --enable-demuxer=mpegvideo \
+        --enable-demuxer=h263 \
+        --enable-demuxer=mpegps \
+        --enable-demuxer=mjpeg \
+        --enable-demuxer=rtsp \
+        --enable-demuxer=rtp \
+        --enable-demuxer=hls \
+        --enable-demuxer=matroska \
+        --enable-muxer=rtsp \
+        --enable-muxer=mp4 \
+        --enable-muxer=mov \
+        --enable-muxer=mjpeg \
+        --enable-muxer=matroska \
+        --enable-protocol=crypto \
+        --enable-protocol=jni \
+        --enable-protocol=file \
+        --enable-protocol=rtp \
+        --enable-protocol=tcp \
+        --enable-protocol=udp \
+        --enable-protocol=applehttp \
+        --enable-protocol=hls \
+        --enable-protocol=http \
+        --enable-decoder=xsub \
+        --enable-decoder=jacosub \
+        --enable-decoder=dvdsub \
+        --enable-decoder=dvbsub \
+        --enable-decoder=subviewer \
+        --enable-decoder=rawvideo \
+        --enable-encoder=rawvideo \
+        --enable-decoder=mjpeg \
+        --enable-encoder=mjpeg \
+        --enable-decoder=h263 \
+        --enable-decoder=mpeg4 \
+        --enable-encoder=mpeg4 \
+        --enable-decoder=h264 \
+        --enable-encoder=h264 \
+        --enable-decoder=aac \
+        --enable-encoder=aac \
+        --enable-parser=h264 \
+        --enable-encoder=mp2 \
+        --enable-decoder=mp2 \
+        --enable-encoder=libvo_amrwbenc \
+        --enable-decoder=amrwb \
+        --enable-muxer=mp2 \
+        --enable-bsfs \
+        --enable-decoders \
+        --enable-encoders \
+        --enable-parsers \
+        --enable-hwaccels \
+        --enable-muxers \
+        --enable-avformat \
+        --enable-avcodec \
+        --enable-avresample \
+        --enable-zlib \
+        --disable-doc \
+        --disable-ffplay \
+        --disable-ffmpeg \
+        --disable-ffplay \
+        --disable-ffprobe \
+        --disable-ffserver \
+        --disable-avfilter \
+        --disable-avdevice \
+        --enable-nonfree \
+        --enable-version3 \
+        --enable-memalign-hack \
+        --enable-asm \
+        $ADDITIONAL_CONFIGURE_FLAG \
+        || exit 1
+    make clean || exit 1
+    make -j4 install || exit 1
 
-	cd ..
+    cd ..
 }
 
 function build_one {
-	cd ffmpeg
-	PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-	export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lz"
+    cd ffmpeg
+    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lz"
 
-	# Get all the object files inside FFMPEG
-	FFMPEG_OBJS="libavutil/ libavcodec/ libavcodec/$ARCH/ libavformat/ libswresample/ libswscale/ libavfilter/ compat/ libavutil/$ARCH/"
-	case $ARCH in
-		arm)
-			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/arm/ libavcodec/neon/"
-		;;
-		x86)
-			FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/x86/ libswscale/x86/ libavfilter/x86/"
-		;;
-		# Default works with mips
-	esac
+    # Get all the object files inside FFMPEG
+    FFMPEG_OBJS="libavutil/ libavcodec/ libavcodec/$ARCH/ libavformat/ libswresample/ libswscale/ libavfilter/ compat/ libavutil/$ARCH/"
+    case $ARCH in
+        arm)
+            FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/arm/ libavcodec/neon/"
+        ;;
+        x86)
+            FFMPEG_OBJS=$FFMPEG_OBJS" libswresample/x86/ libswscale/x86/ libavfilter/x86/"
+        ;;
+        # Default works with mips
+    esac
 
-	# Check each FFMPEG object path if they exist before adding them to the list
-	OBJS=
-	for path in $FFMPEG_OBJS; do
-		objs_path=$path"*.o"
-		if [ `ls -1 $objs_path 2>/dev/null | wc -l` -gt "0" ]; then
-			OBJS=$OBJS" "$objs_path
-		fi
-	done
+    # Check each FFMPEG object path if they exist before adding them to the list
+    OBJS=
+    for path in $FFMPEG_OBJS; do
+        objs_path=$path"*.o"
+        if [ `ls -1 $objs_path 2>/dev/null | wc -l` -gt "0" ]; then
+            OBJS=$OBJS" "$objs_path
+        fi
+    done
 
-	# Finally package into shared library
-	rm -f libavcodec/inverse.o ../vo-aacenc/common/cmnMemory.o
-	$CC -o $OUT_LIBRARY -shared -nostdlib -Wl,-z,noexecstack -Bsymbolic $LDFLAGS $EXTRA_LDFLAGS $OBJS \
-		  $(find ../ -name "*.o" -not -path "../ffmpeg/*" | tr '\n' ' ') \
+    # Finally package into shared library
+    rm -f libavcodec/inverse.o ../vo-aacenc/common/cmnMemory.o
+    $CC -o $OUT_LIBRARY -shared -nostdlib -Wl,-z,noexecstack -Bsymbolic $LDFLAGS $EXTRA_LDFLAGS $OBJS \
+          $(find ../ -name "*.o" -not -path "../ffmpeg/*" | tr '\n' ' ') \
           -zmuldefs $PREBUILT/lib/gcc/$EABIARCH/$TOOLCHAIN_VER/libgcc.a
-	$PREBUILT/bin/$EABIARCH-strip --strip-unneeded $OUT_LIBRARY
-	cd ..
+    $PREBUILT/bin/$EABIARCH-strip --strip-unneeded $OUT_LIBRARY
+    cd ..
 }
 
 #arm v5
