@@ -15,6 +15,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =======================================================================
+#   Customize FFmpeg build
+#       Comment out what you do not need, specifying 'no' will not
+#       disable them.
+#
+#   Building with x264
+#       Will not work for armv5
+ENABLE_X264=yes
+
+#   Toolchain version
+#       Comment out if you want default or specify a version
+#       Default takes the highest toolchain version from NDK
+# TOOLCHAIN_VER=4.6
+
+#
+# =======================================================================
+
 if [ "$NDK" = "" ]; then
     echo NDK variable not set, exiting
     echo "   Example: export NDK=/your/path/to/android-ndk"
@@ -65,47 +82,51 @@ echo Using Android platform from $NDK/platforms/android-$PLATFORM_VERSION
 PLATFORM_VERSION=android-$PLATFORM_VERSION
 
 # Get the newest arm-linux-androideabi version
-folders=$NDK/toolchains/arm-linux-androideabi-*
-for i in $folders; do
-    n=${i#*$NDK/toolchains/arm-linux-androideabi-}
-    reg='.*?[a-zA-Z].*?'
-    if ! [[ $n =~ $reg ]] ; then
-        TOOLCHAIN_VER=$n
+if [ -z "$TOOLCHAIN_VER" ]; then
+    folders=$NDK/toolchains/arm-linux-androideabi-*
+    for i in $folders; do
+        n=${i#*$NDK/toolchains/arm-linux-androideabi-}
+        reg='.*?[a-zA-Z].*?'
+        if ! [[ $n =~ $reg ]] ; then
+            TOOLCHAIN_VER=$n
+        fi
+    done
+    if [ ! -d $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER ]; then
+        echo $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER does not exist
+        exit 1
     fi
-done
-if [ ! -d $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER ]; then
-    echo $NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER does not exist
-    exit 1
 fi
 echo Using $NDK/toolchains/{ARCH}-$TOOLCHAIN_VER
 
 OS=`uname -s | tr '[A-Z]' '[a-z]'`
 function build_x264
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
-    export PATH=${PATH}:$PREBUILT/bin/
-    CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
-    CFLAGS=$OPTIMIZE_CFLAGS
-    ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-gpl --enable-libx264"
+    find x264/ -name "*.o" -type f -delete
+    if [ ! -z "$ENABLE_X264" ]; then
+        PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+        export PATH=${PATH}:$PREBUILT/bin/
+        CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
+        CFLAGS=$OPTIMIZE_CFLAGS
+        ADDITIONAL_CONFIGURE_FLAG="$ADDITIONAL_CONFIGURE_FLAG --enable-gpl --enable-libx264"
 #CFLAGS=" -I$ARM_INC -fpic -DANDROID -fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__  -Wno-psabi -march=armv5te -mtune=xscale -msoft-float -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -DANDROID  -Wa,--noexecstack -MMD -MP "
-    export CPPFLAGS="$CFLAGS"
-    export CFLAGS="$CFLAGS"
-    export CXXFLAGS="$CFLAGS"
-    export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
-    export AS="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-    export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
-    export NM="${CROSS_COMPILE}nm"
-    export STRIP="${CROSS_COMPILE}strip"
-    export RANLIB="${CROSS_COMPILE}ranlib"
-    export AR="${CROSS_COMPILE}ar"
-    export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
+        export CPPFLAGS="$CFLAGS"
+        export CFLAGS="$CFLAGS"
+        export CXXFLAGS="$CFLAGS"
+        export CXX="${CROSS_COMPILE}g++ --sysroot=$PLATFORM"
+        export AS="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+        export CC="${CROSS_COMPILE}gcc --sysroot=$PLATFORM"
+        export NM="${CROSS_COMPILE}nm"
+        export STRIP="${CROSS_COMPILE}strip"
+        export RANLIB="${CROSS_COMPILE}ranlib"
+        export AR="${CROSS_COMPILE}ar"
+        export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
 
-    cd x264
-    find . -name "*.o" -type f -delete
-    ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
-    make clean || exit 1
-    make STRIP= -j4 install || exit 1
-    cd ..
+        cd x264
+        ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
+        make clean || exit 1
+        make STRIP= -j4 install || exit 1
+        cd ..
+    fi
 }
 
 function build_amr
