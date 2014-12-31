@@ -21,7 +21,7 @@
 	url = git://git.videolan.org/x264.git
 [submodule "VPlayer_library/jni/tropicssl"]
 	path = VPlayer_library/jni/tropicssl
-	url = https://review.appunite.com/tropicssl.git
+	url = https://gitorious.org/tropicssl/tropicssl.git
 [submodule "ffmpeg_build/libpng"]
 	path = ffmpeg_build/libpng
 	url = git://git.code.sf.net/p/libpng/code
