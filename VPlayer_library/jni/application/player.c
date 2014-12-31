@@ -731,10 +731,11 @@ enum WaitFuncRet player_wait_for_frame(struct Player *player, int64_t stream_tim
 		int64_t current_video_time = player_get_current_video_time(player);
 
 		LOGI(8,
-				"player_wait_for_frame[%d = %s] = (%"PRId64") - (%f)",
+				"player_wait_for_frame[%d = %s] = (%f) - (%f)",
 				stream_no,
 				player->video_stream_no == stream_no ? "Video" : "Audio",
-						stream_time, (float)(current_video_time/1000000.0));
+						(float)(stream_time/1000000.0),
+						(float)(current_video_time/1000000.0));
 
 		int64_t sleep_time = stream_time - current_video_time;
 
