@@ -18,7 +18,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity implements OnItemClickListener {
 
     public static String[] VIDEO_FORMATS = {
-        ".avi", ".mpeg", ".mpg", ".m1v", ".m2v", ".mkv", ".webm", ".mp4", ".mov", ".m4v", ".mp4v", ".3gp", ".wmv"
+        ".avi", ".mpeg", ".mpg", ".m1v", ".m2v", ".mkv", ".mjpeg", ".mjpg", ".webm", ".mp4", ".mov", ".m4v", ".mp4v", ".3gp", ".wmv"
     };
 
     private FileSystemAdapter mAdapter;

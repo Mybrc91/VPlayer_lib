@@ -404,6 +404,8 @@ EOF
         --enable-demuxer=rtp \
         --enable-demuxer=hls \
         --enable-demuxer=matroska \
+        --enable-demuxer=smjpeg \
+        --enable-muxer=smjpeg \
         --enable-muxer=rtsp \
         --enable-muxer=mp4 \
         --enable-muxer=mov \
