@@ -10,6 +10,3 @@ SRC_FFMPEG=../../ffmpeg_build/ffmpeg
 DST_FFMPEG=ffmpeg
 mkdir -p $DST_FFMPEG
 (cd $SRC_FFMPEG && find . -name '*.h' -print | tar --create --files-from -) | (cd $DST_FFMPEG && tar xvfp -)
-
-# You need SVN!
-svn checkout http://libyuv.googlecode.com/svn/trunk/ libyuv

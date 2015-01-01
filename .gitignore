@@ -10,7 +10,6 @@ VPlayer_library/proguard/**
 VPlayer_library/.settings/**
 VPlayer_library/jni/.settings/**
 VPlayer_library/lint.xml
-VPlayer_library/jni/libyuv/**
 
 VPlayerExample/bin/**
 VPlayerExample/gen/**
@@ -23,7 +22,6 @@ VPlayerExample/lint.xml
 VPlayerExample/proguard-project.txt
 
 *~
-libyuv/
 
 
 .cproject
