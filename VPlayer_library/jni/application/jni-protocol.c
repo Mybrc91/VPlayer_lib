@@ -287,5 +287,5 @@ URLProtocol jni_protocol = { .name = "jni", .url_open2 = jni_open2,
 
 void register_jni_protocol(JavaVM *jvm) {
 	global_jvm = jvm;
-	ffurl_register_protocol(&jni_protocol, sizeof(jni_protocol));
+	ffurl_register_protocol(&jni_protocol);
 }

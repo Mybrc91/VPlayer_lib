@@ -303,5 +303,5 @@ URLProtocol aes_protocol = { .name = "aes", .url_open = aes_open, .url_read =
 		.flags = URL_PROTOCOL_FLAG_NESTED_SCHEME, };
 
 void register_aes_protocol() {
-	ffurl_register_protocol(&aes_protocol, sizeof(aes_protocol));
+	ffurl_register_protocol(&aes_protocol);
 }
