@@ -104,6 +104,14 @@ if [ -z "$TOOLCHAIN_VER" ]; then
 fi
 echo Using $NDK/toolchains/{ARCH}-$TOOLCHAIN_VER
 
+# Read from the Android.mk file to build subtitles (fribidi, libpng, freetype2, libass)
+while read line; do
+    if [[ $line =~ ^SUBTITLES\ *?:= ]]; then
+        echo "Going to build with subtitles"
+        BUILD_WITH_SUBS=true
+    fi
+done <"../VPlayer_library/jni/Android.mk"
+
 OS=`uname -s | tr '[A-Z]' '[a-z]'`
 function build_x264
 {
@@ -506,6 +514,21 @@ function build_one {
     $PREBUILT/bin/$EABIARCH-strip --strip-unneeded $OUT_LIBRARY
     cd ..
 }
+function build_subtitles
+{
+    if [ ! -z "$BUILD_WITH_SUBS" ]; then
+        build_fribidi
+        build_png
+        build_freetype2
+        build_ass
+    else
+        # Delete object files so they don't get included when building shared library
+        find fribidi/ -name "*.o" -type f -delete
+        find libpng/ -name "*.o" -type f -delete
+        find freetype2/ -name "*.o" -type f -delete
+        find libass/ -name "*.o" -type f -delete
+    fi
+}
 
 #arm v5
 if [[ " ${archs[*]} " == *" armeabi "* ]] || [ "$build_all" = true ]; then
@@ -523,10 +546,7 @@ if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 find x264/ -name "*.o" -type f -delete
 build_amr
 build_aac
-build_fribidi
-build_png
-build_freetype2
-build_ass
+build_subtitles
 build_ffmpeg
 build_one
 fi
@@ -545,10 +565,7 @@ if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 build_x264
 build_amr
 build_aac
-build_fribidi
-build_png
-build_freetype2
-build_ass
+build_subtitles
 build_ffmpeg
 build_one
 fi
@@ -567,10 +584,7 @@ if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 build_x264
 build_amr
 build_aac
-build_fribidi
-build_png
-build_freetype2
-build_ass
+build_subtitles
 build_ffmpeg
 build_one
 fi
@@ -591,10 +605,7 @@ if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 build_x264
 build_amr
 build_aac
-build_fribidi
-build_png
-build_freetype2
-build_ass
+build_subtitles
 build_ffmpeg
 build_one
 
@@ -613,10 +624,7 @@ if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
 build_x264
 build_amr
 build_aac
-build_fribidi
-build_png
-build_freetype2
-build_ass
+build_subtitles
 build_ffmpeg
 build_one
 fi
