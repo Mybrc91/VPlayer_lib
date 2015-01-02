@@ -1,4 +1,6 @@
-This page describes how to compile FFmpeg using NDK for Android. This is a more advanced challenge and is not for beginners that are learning NDK.
+This page describes how to compile FFmpeg using NDK for Android. This is a more intermediate challenge.
+
+This is **not a mandatory step** to integrate a basic video player into your application, to integrate **without compiling FFmpeg**, go [here](https://github.com/matthewn4444/VPlayer_lib/wiki/Compiling-VPlayer#building-vplayer-with-ffmpeg-binaries). However if you want to reduce the binary size or limit the codecs etc, this is will be useful.
 
 ## Prerequisites
 
@@ -13,17 +15,18 @@ You need the following tools:
 - automake
 - pkg-config
 - git
-- svn
+- libtool
+
+**Command (Debian/Ubuntu):**
+
+``sudo apt-get install autoconf autoconf-archive automake pkg-config git libtool``
 
 For mac: you have to install xcode and command tools from xcode preferences (tool brew from homebrew project)
-For Debian/Ubuntu: you can use apt-get
 
-**Download [Eclipse](https://developer.android.com/sdk/index.html)** and setup the environment for Android (or [Android Studio](https://developer.android.com/sdk/installing/studio.html), or use Ant if you want). Note that this wiki only mentions about Eclipse, the other stuff you have to learn yourself.
 
-**Download NDK-8** because NDK9+ will not compile FFmpeg out of the box (aka you need to do more work which I am not describing). Put it somewhere easy to access (like in your home directory); **make sure no spaces in the path!**
+**Download [Eclipse](https://developer.android.com/sdk/index.html)** and setup the environment for Android (or [Android Studio](https://developer.android.com/sdk/installing/studio.html), or use Ant if you want).
 
-- Linux: [https://dl.google.com/android/ndk/android-ndk-r8e-linux-x86.tar.bz2](https://dl.google.com/android/ndk/android-ndk-r8e-linux-x86.tar.bz2)
-- Mac: [https://dl.google.com/android/ndk/android-ndk-r8e-darwin-x86.tar.bz2](https://dl.google.com/android/ndk/android-ndk-r8e-darwin-x86.tar.bz2)
+**Download any version of [NDK](https://developer.android.com/tools/sdk/ndk/index.html)** (can also build with the x64 variant and preferably new versions)
 
 ### Cloning the project
 
@@ -31,39 +34,54 @@ Clone the project:
 
 ``git clone git@github.com:matthewn4444/VPlayer_lib.git``
 
-## Building Source
-
-Assuming that you did everything in the prerequisites section, this should be smooth
-
-### Building FFmpeg
+## Building Source and FFmpeg
 
 _*Note: If you want to speed up the build process, limit the architectures and/or lessen the codecs.*_
 
-1. Set the path to NDK: ``export NDK=~/<path to NDK>/NDK`` where it should be v8
+1. Set the path to NDK: ``export NDK=~/<path to NDK>/NDK`` (you can store it in your ~/.bashrc file if you want)
 
-2. Go into the folder **<root>/ffmpeg_build** and run **config_and_build.sh** once. 
-   - If the build fails, you might want to run this again. 
-   - If build is succeeds and then if you want to build again, you only need to run **build_android.sh** (you do not need to configure again)
+2. Go into the folder **{root}/VPlayer_library/jni** and edit **Application.mk**:
+   - Modify **APP_ABI** for which architectures to build for (armeabi, armeabi-v7a, x86, or mips)
+   - Modify **APP_PLATFORM** for which platform to build with (if you use a higher number, it will choose the next lower version; e.g you choose _android-10_, it will choose _android-9_ if 10 doesn't exist)
 
-3. The output of the files are in **<root>/VPlayer_library/jni/ffmpeg-build/<arch>/libffmpeg.so**
+2. Go into the folder **{root]/ffmpeg_build** and run **config_and_build.sh** once. 
+   - This will build with the newest toolchain from your NDK folder. If you want to use a specific version, modify it in the _android_android.sh_ file
+   - If the build fails, you might want to run this again.
+   - If the build succeeds and then if you want to build again, you only need to run **build_android.sh** (you do not need to configure again)
 
-### Customizing FFmpeg
+3. The output of the files are in **{root}/VPlayer_library/jni/ffmpeg-build/{arch}/libffmpeg.so**
 
-Edit the file **<root>/ffmpeg_build/build_android.sh**
+## Customizing FFmpeg
 
-#### Customize Architectures
+Edit the file **{root}/ffmpeg_build/build_android.sh** under _function build_ffmpeg_
 
-At the bottom, there are code blocks for arm v5, x86, mips, arm v7vfpv3 and arm v7 + neon. Remember with this file, it builds each at over 30mb each, limiting which architecture to build will reduce build time.
+### Customize Architectures
 
-You can comment an entire block to ignore the build for a certain architecture.
+Go to **{root}/VPlayer_library/jni/Application.mk** and modify which architectures to change. _armeabi-v7a_ will build with neon. All will work too but it might fail later when building the apk because I did not add 64bit support yet. Each build will take a long time so try to reduce your architecture list.
 
-#### Customize Codecs
+### Customize Codecs
 
-Starting from line 244 lists a bunch of configurations for FFmpeg. After **--disable-everything** you can disable enable certain codecs. [Here](http://ffmpeg.mplayerhq.hu/general.html) is some more information.
+Starting from line 316 lists a bunch of configurations for FFmpeg. After **--disable-everything** you can disable enable certain codecs. [Here](http://ffmpeg.mplayerhq.hu/general.html) is some more information.
 
-#### x264
+### Customize Subtitles
 
-Since I cannot get this to work, you can try building it yourself. The prebuilt libraries do not include these.
+To reduce the file size of _libffmpeg.so_ you can build without subtitles if you don't need them. 
+
+Go to **{root}/VPlayer_library/jni/Application.mk** and comment out ``SUBTITLES=yes`` and it will not compile with subtitles. Likewise, uncomment the line to allow subtitles. You will save about 1-2mb off the shared library. Deciding to compile the NDK application with subtitles will lead to build errors when not compiling FFmpeg with subtitles.
+
+### Customize Toolchain Version
+
+Edit **{root}/ffmpeg_build/build_android.sh** by uncommenting ``TOOLCHAIN_VER=4.6`` and change number with the number available in your toolchain library **{path to ndk}/toolchains/**. For a clang version, use ``TOOLCHAIN_VER=clang4.9``.
+
+### Customize to use x264
+
+If you do not need _libx264_ then edit **{root}/ffmpeg_build/build_android.sh** and comment ``ENABLE_X264=yes``.
+
+### Customize AAC
+
+You can either use vo-aacenc or fdk-aac. fdk-aac is the superior encoder however because of licensing, the prebuilt libraries I posted will not have them available, you will need to build FFmpeg yourself (luckily it is built by default).
+
+Edit **{root}/ffmpeg_build/build_android.sh** by commenting ``PREFER_FDK_AAC=yes`` to use **vo-aacenc** or leave it uncommented to use **fdk-aac**.
 
 ## Extra Stuff
 
@@ -77,18 +95,13 @@ On AndroidFFmpeg's readme, he gives some instructions of how to customize before
    
    Recursively updates all the submodules and downloads the other libraries (such as libass and FFmpeg)
 
-2. ``svn checkout http://libyuv.googlecode.com/svn/trunk/ ../VPlayer_library/jni/libyuv``
-
-   libyuv is the only library submitted via SVN and it checkouts the project to the jni file of the library
-
-3. ``sh ./autogen.sh`` & ``autoreconf -ivf``
+2. ``sh ./autogen.sh`` & ``autoreconf -ivf``
 
    These two are used to configure the environments for freetype2, fribidi, libass, vo-aacenc and vo-amrwbenc
 
-4. ``addAutomakeOpts``
+3. ``addAutomakeOpts``
 
    Adds ``1iAUTOMAKE_OPTIONS=subdir-objects`` to the Makefile.am files inside vo-aacenc and vo-amrwbenc because it needs them to configure successfully.
 
-5. ``source build_android.sh``
+4. ``source build_android.sh``
    Starts the compilation of FFmpeg.
-

@@ -11,6 +11,9 @@ VPlayer into your project. I provide prebuilt binaries for the project.
 
 ## Changes/Fixes from AndroidFFmpeg
 
+- Able to compile with gcc 4.6+ toolchain (yes that means you can use NDK r10+)
+- Updated with the newest versions of each library
+- Super easy way to compile FFmpeg from scratch without hassles
 - Allows video application pausing and resuming when user suspends app (going home or another app)
 - Fixes crashing issue when using the same video player for multiple videos (with or without subs)
 - Fixes video startup crashes after returning from a video
@@ -71,7 +74,7 @@ For building the project, please refer [here](https://github.com/matthewn4444/VP
 Copyright (C) 2014 Matthew Ng
 Licensed under the Apache License, Verision 2.0
 
-AndroidFFmpeg, FFmpeg, libvo-aacenc, vo-amrwbenc, libyuv and others libraries projects are distributed on theirs own license.
+AndroidFFmpeg, FFmpeg, libpng, fdk-aac, fribidi, libvo-aacenc, vo-amrwbenc, tropicssl, and libyuv are distributed on theirs own license.
 
 ## Patent disclaimer
 We do not grant of patent rights.
