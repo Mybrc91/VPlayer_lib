@@ -396,7 +396,6 @@ EOF
         --extra-ldflags="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -nostdlib -lc -lm -ldl -llog -L$PREFIX/lib" \
         --extra-cflags="-I$PREFIX/include" \
         --disable-everything \
-        --enable-libass \
         --enable-libvo-amrwbenc \
         --enable-hwaccel=h264_vaapi \
         --enable-hwaccel=h264_vaapi \
@@ -521,6 +520,7 @@ function build_subtitles
         build_png
         build_freetype2
         build_ass
+        ADDITIONAL_CONFIGURE_FLAG=$ADDITIONAL_CONFIGURE_FLAG" --enable-libass"
     else
         # Delete object files so they don't get included when building shared library
         find fribidi/ -name "*.o" -type f -delete
