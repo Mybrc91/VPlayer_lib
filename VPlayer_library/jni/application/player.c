@@ -16,6 +16,7 @@
  *
  */
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -1559,6 +1560,13 @@ int player_open_stream(struct Player *player, AVCodecContext * ctx,
 				codec_id);
 		return -ERROR_COULD_NOT_FIND_VIDEO_CODEC;
 	}
+
+	// Enable multithread feature depending on number of cores your device has
+	if (ctx->codec_type == AVMEDIA_TYPE_VIDEO) {
+		ctx->thread_count = sysconf(_SC_NPROCESSORS_CONF);
+		LOGI(1, "Processing with %d cores", ctx->thread_count);
+	}
+
 	if (avcodec_open2(ctx, *codec, NULL) < 0) {
 		LOGE(1, "Could not open codec");
 		player_print_codec_description(*codec);
