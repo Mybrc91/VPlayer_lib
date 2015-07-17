@@ -2723,16 +2723,8 @@ int jni_player_init(JNIEnv *env, jobject thiz) {
 	monstartup("libffmpeg.so");
 #endif
 
-    // Init player and set everything to 0
-    struct Player *player, playerTemp = {0};
-    player = malloc(sizeof(struct Player));
-    *player = playerTemp;
-
-    // This was set by original author, it will crash if you press back when video was
-    // playing and app is still in memory because it will not set all values to 0
-    // Read: http://ex-parrot.com/~chris/random/initialise.html
-    //memset(player, 0, sizeof(player));
-
+	struct Player *player = malloc(sizeof(struct Player));
+	memset(player, 0, sizeof(*player));
 	player->audio_stream_no = -1;
 	player->video_stream_no = -1;
 #ifdef SUBTITLES
