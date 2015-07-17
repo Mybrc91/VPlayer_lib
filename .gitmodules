@@ -27,7 +27,7 @@
 	url = git://git.code.sf.net/p/libpng/code
 [submodule "ffmpeg_build/fdk-aac"]
 	path = ffmpeg_build/fdk-aac
-	url = git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/fdk-aac
+	url = https://github.com/mstorsjo/fdk-aac.git
 [submodule "VPlayer_library/jni/libyuv"]
 	path = VPlayer_library/jni/libyuv
 	url = https://git.chromium.org/external/libyuv.git
