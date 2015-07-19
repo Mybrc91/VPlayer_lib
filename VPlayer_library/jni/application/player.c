@@ -769,8 +769,17 @@ enum WaitFuncRet player_wait_for_frame(struct Player *player, int64_t stream_tim
 			sleep_time = 500000ll;
 		}
 
-		int timeout_ret = pthread_cond_timeout_np(&player->cond_queue,
-				&player->mutex_queue, sleep_time/1000ll);
+		long long timeoutMsec = sleep_time/1000ll;
+		struct timespec ts;
+		if (timeoutMsec != 0) {
+			struct timeval tv;
+			gettimeofday(&tv, (struct timezone *) NULL);
+			ts.tv_sec = tv.tv_sec + (timeoutMsec / 1000);
+			ts.tv_nsec = (tv.tv_usec + (timeoutMsec % 1000) * 1000L ) * 1000L;
+		}
+
+		int timeout_ret = pthread_cond_timedwait(&player->cond_queue,
+				&player->mutex_queue, &ts);
 		if (timeout_ret == ETIMEDOUT) {
 			// nothing special probably it is time ready to display
 			// but for sure check everything again

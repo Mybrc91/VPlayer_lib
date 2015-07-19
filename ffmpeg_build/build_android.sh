@@ -85,7 +85,6 @@ if [ ! -d "$NDK/platforms/android-$PLATFORM_VERSION" ]; then
     fi
 fi
 echo Using Android platform from $NDK/platforms/android-$PLATFORM_VERSION
-PLATFORM_VERSION=android-$PLATFORM_VERSION
 
 # Get the newest arm-linux-androideabi version
 if [ -z "$TOOLCHAIN_VER" ]; then
@@ -117,7 +116,7 @@ function build_x264
 {
     find x264/ -name "*.o" -type f -delete
     if [ ! -z "$ENABLE_X264" ]; then
-        PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+        PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
         export PATH=${PATH}:$PREBUILT/bin/
         CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
         CFLAGS=$OPTIMIZE_CFLAGS
@@ -136,7 +135,7 @@ function build_x264
         export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lgcc"
 
         cd x264
-        ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$ARCH-linux --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
+        ./configure --prefix=$(pwd)/$PREFIX --disable-gpac --host=$HOST --enable-pic --enable-static $ADDITIONAL_CONFIGURE_FLAG || exit 1
         make clean || exit 1
         make STRIP= -j4 install || exit 1
         cd ..
@@ -145,7 +144,7 @@ function build_x264
 
 function build_amr
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS=$OPTIMIZE_CFLAGS
@@ -164,7 +163,7 @@ function build_amr
     cd vo-amrwbenc
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-dependency-tracking \
         --disable-shared \
         --enable-static \
@@ -179,7 +178,7 @@ function build_amr
 
 function build_aac
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS=$OPTIMIZE_CFLAGS
@@ -211,7 +210,7 @@ function build_aac
     export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-dependency-tracking \
         --disable-shared \
         --enable-static \
@@ -225,7 +224,7 @@ function build_aac
 }
 function build_png
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS=$OPTIMIZE_CFLAGS
@@ -244,7 +243,7 @@ function build_png
     cd libpng
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-dependency-tracking \
         --disable-shared \
         --enable-static \
@@ -258,7 +257,7 @@ function build_png
 }
 function build_freetype2
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS=$OPTIMIZE_CFLAGS
@@ -279,7 +278,7 @@ function build_freetype2
     export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-dependency-tracking \
         --disable-shared \
         --enable-static \
@@ -294,7 +293,7 @@ function build_freetype2
 }
 function build_ass
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS="$OPTIMIZE_CFLAGS"
@@ -315,7 +314,7 @@ function build_ass
     export PKG_CONFIG_PATH=$(pwd)/$PREFIX/lib/pkgconfig/
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-fontconfig \
         --disable-dependency-tracking \
         --disable-shared \
@@ -330,7 +329,7 @@ function build_ass
 }
 function build_fribidi
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export PATH=${PATH}:$PREBUILT/bin/
     CROSS_COMPILE=$PREBUILT/bin/$EABIARCH-
     CFLAGS="$OPTIMIZE_CFLAGS -std=gnu99"
@@ -349,7 +348,7 @@ function build_fribidi
     cd fribidi
     ./configure \
         --prefix=$(pwd)/$PREFIX \
-        --host=$ARCH-linux \
+        --host=$HOST \
         --disable-bin \
         --disable-dependency-tracking \
         --disable-shared \
@@ -364,7 +363,7 @@ function build_fribidi
 }
 function build_ffmpeg
 {
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     CC=$PREBUILT/bin/$EABIARCH-gcc
     CROSS_PREFIX=$PREBUILT/bin/$EABIARCH-
     PKG_CONFIG=${CROSS_PREFIX}pkg-config
@@ -481,7 +480,7 @@ EOF
 
 function build_one {
     cd ffmpeg
-    PLATFORM=$NDK/platforms/$PLATFORM_VERSION/arch-$ARCH/
+    PLATFORM=$NDK/platforms/android-$PLATFORM_VERSION/arch-$ARCH/
     export LDFLAGS="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lz"
 
     # Get all the object files inside FFMPEG
@@ -529,6 +528,8 @@ function build_subtitles
         find libass/ -name "*.o" -type f -delete
     fi
 }
+
+HOST=$ARCH-linux
 
 #arm v5
 if [[ " ${archs[*]} " == *" armeabi "* ]] || [ "$build_all" = true ]; then
@@ -621,6 +622,27 @@ SONAME=libffmpeg-neon.so
 EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
 PREBUILT=$NDK/toolchains/arm-linux-androideabi-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+build_x264
+build_amr
+build_aac
+build_subtitles
+build_ffmpeg
+build_one
+fi
+
+#arm64-v8a
+if [[ " ${archs[*]} " == *" arm64-v8a "* ]] || [ "$build_all" = true ]; then
+EABIARCH=aarch64-linux-android
+HOST=aarch64
+ARCH=arm64
+CPU=arm64
+PREFIX=../../VPlayer_library/jni/ffmpeg-build/arm64-v8a
+OUT_LIBRARY=../../VPlayer_library/jni/ffmpeg-build/arm64-v8a/libffmpeg.so
+ADDITIONAL_CONFIGURE_FLAG=--enable-neon
+SONAME=libffmpeg-neon.so
+PREBUILT=$NDK/toolchains/aarch64-linux-android-4.9/prebuilt/$OS-x86_64
+if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
+if [ $PLATFORM_VERSION -lt 21 ]; then PLATFORM_VERSION=21; fi
 build_x264
 build_amr
 build_aac

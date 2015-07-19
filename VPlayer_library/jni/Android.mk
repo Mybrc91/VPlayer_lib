@@ -100,6 +100,13 @@ LOCAL_CPP_INCLUDES += $(LOCAL_PATH)/libyuv/include
 LOCAL_STATIC_LIBRARIES += libyuv_static
 LOCAL_REQUIRED_MODULES += libyuv_static
 
+ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+LOCAL_SRC_FILES +=  $(LOCAL_PATH)/libyuv/source/compare_neon64.cc    \
+			        $(LOCAL_PATH)/libyuv/source/rotate_neon64.cc     \
+			        $(LOCAL_PATH)/libyuv/source/row_neon64.cc        \
+			        $(LOCAL_PATH)/libyuv/source/scale_neon64.cc
+endif
+
 ifdef MODULE_ENCRYPT
 LOCAL_CFLAGS += -DMODULE_ENCRYPT
 LOCAL_SRC_FILES += application/aes-protocol.c
