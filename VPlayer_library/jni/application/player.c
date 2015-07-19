@@ -1482,6 +1482,8 @@ int player_write_audio(struct DecoderData *decoder_data, JNIEnv *env,
 	(*env)->ReleaseByteArrayElements(env, samples_byte_array, jni_samples, 0);
 
 	LOGI(10, "player_write_audio playing audio track");
+
+	int pause_state_before_write = player->pause;
 	ret = (*env)->CallIntMethod(env, player->audio_track,
 			player->audio_track_write_method, samples_byte_array, 0, data_size);
 	jthrowable exc = (*env)->ExceptionOccurred(env);
@@ -1491,7 +1493,9 @@ int player_write_audio(struct DecoderData *decoder_data, JNIEnv *env,
 		// TODO maybe release exc
 		goto free_local_ref;
 	}
-	if (ret < 0) {
+	// Do not throw exception if there was an error when player changes states in between
+	// (mainly pausing the player while audio plays)
+	if (ret < 0 && pause_state_before_write == player->pause) {
 		err = -ERROR_PLAYING_AUDIO;
 		LOGE(3,
 				"Could not write audio track: reason: %d look in AudioTrack.write()", ret);
