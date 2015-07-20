@@ -1,23 +1,20 @@
-# VPlayer Library
+# VPlayer Library (0.3.2)
 This project provides the easiest way to include FFmpeg into any Android project with almost no NDK building and tweaking.
 Of course if you want to customize FFmpeg, you will have to build the project from scratch.
 
-Forked from [appunite/AndroidFFmpeg](https://github.com/appunite/AndroidFFmpeg), this project has a few enhancements since
-they stopped updating the repository around April 2013. I have added some more functionality and a new simple project for
-developers to get started with.
+Forked from [appunite/AndroidFFmpeg](https://github.com/appunite/AndroidFFmpeg), this project has a few enhancements to make it
+easier to develop and embed videos to your app. I have added some more functionality and a new simple project for
+developers to get started with. This project follows AndroidFFmpeg closely.
 
 Read the wikis for this work. Even if you are a beginner to NDK, this project should be comprehensable enough to include 
 VPlayer into your project. I provide prebuilt binaries for the project.
 
 ## Changes/Fixes from AndroidFFmpeg
 
-- Able to compile with gcc 4.6+ toolchain (yes that means you can use NDK r10+)
+- Able to compile with gcc 4.9+ toolchain and NDK r10e (32 or 64bit)
 - Updated with the newest versions of each library
 - Super easy way to compile FFmpeg from scratch without hassles
-- Allows video application pausing and resuming when user suspends app (going home or another app)
 - Fixes crashing issue when using the same video player for multiple videos (with or without subs)
-- Fixes video startup crashes after returning from a video
-- Added hardware acceleration to YUV420 videos
 - Added a single build file to compile all dependencies without any need of commandline
 - Changed the Java library to easily integrate a video into a project
 - Added looping functionality
@@ -66,12 +63,12 @@ You can view more integration tutorials [here](https://github.com/matthewn4444/V
 
 You can clone the project here:
 
-`` git clone git@github.com:matthewn4444/VPlayer_lib.git``
+`` git clone https://github.com/matthewn4444/VPlayer_lib.git``
 
 For building the project, please refer [here](https://github.com/matthewn4444/VPlayer_lib/wiki/Compiling-VPlayer).
 
 ## License
-Copyright (C) 2014 Matthew Ng
+Copyright (C) 2015 Matthew Ng
 Licensed under the Apache License, Verision 2.0
 
 AndroidFFmpeg, FFmpeg, libpng, fdk-aac, fribidi, libvo-aacenc, vo-amrwbenc, tropicssl, and libyuv are distributed on theirs own license.
