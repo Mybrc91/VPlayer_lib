@@ -33,7 +33,7 @@ ENABLE_X264=yes
 #       Default uses vo-amrwbenc and it is worse than fdk-aac but
 #       because of licensing, it requires you to build FFmpeg from
 #       scratch if you want to use fdk-aac. Uncomment to use fdk-aac
-PREFER_FDK_AAC=yes
+# PREFER_FDK_AAC=yes
 
 #
 # =======================================================================
@@ -422,7 +422,6 @@ EOF
         || exit 1
     make clean || exit 1
     make -j4 install || exit 1
-
     cd ..
 }
 
@@ -524,7 +523,7 @@ ARCH=mips
 OPTIMIZE_CFLAGS="-EL -march=mips32 -mips32 -mhard-float"
 PREFIX=../../VPlayer_library/jni/ffmpeg-build/mips
 OUT_LIBRARY=$PREFIX/libffmpeg.so
-ADDITIONAL_CONFIGURE_FLAG="--disable-mips32r2"
+ADDITIONAL_CONFIGURE_FLAG="--disable-mipsdspr1 --disable-mipsdspr2"
 SONAME=libffmpeg.so
 PREBUILT=$NDK/toolchains/mipsel-linux-android-$TOOLCHAIN_VER/prebuilt/$OS-x86
 if [ ! -d "$PREBUILT" ]; then PREBUILT="$PREBUILT"_64; fi
