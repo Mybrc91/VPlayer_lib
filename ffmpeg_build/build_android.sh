@@ -38,9 +38,12 @@ ENABLE_X264=yes
 #
 # =======================================================================
 
-if [ "$NDK" = "" ]; then
-    echo NDK variable not set, exiting
+if [ -n $(which ndk-build) ]; then
+    NDK=$(dirname $(which ndk-build))
+elif [ -z "$NDK" ]; then
+    echo NDK variable not set or in path, exiting
     echo "   Example: export NDK=/your/path/to/android-ndk"
+    echo "   Or add your ndk path to ~/.bashrc"
     echo "   Then run ./build_android.sh"
     exit 1
 fi
