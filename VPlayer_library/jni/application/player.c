@@ -2394,6 +2394,7 @@ int player_set_data_source(struct State *state, const char *file_path,
 	struct Player *player = state->player;
 	int err = ERROR_NO_ERROR;
 	int i;
+	player->audio_clock = 0;
 
 	pthread_mutex_lock(&player->mutex_operation);
 
