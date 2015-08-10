@@ -1,35 +1,43 @@
-VPlayer_library/jni/ffmpeg-build/**
-VPlayer_library/jni/ffmpeg/**
-VPlayer_library/bin/**
-VPlayer_library/local.properties
-VPlayer_library/gen/**
-VPlayer_library/tmp/**
-VPlayer_library/obj/**
-VPlayer_library/libs/**
-VPlayer_library/proguard/**
-VPlayer_library/.settings/**
-VPlayer_library/jni/.settings/**
-VPlayer_library/lint.xml
+# Project specific
+/VPlayer_library/libs/
+/VPlayer_library/jni/ffmpeg-build/
+/VPlayer_library/jni/ffmpeg/
 
-VPlayerExample/bin/**
-VPlayerExample/gen/**
-VPlayerExample/tmp/**
-VPlayerExample/obj/**
-VPlayerExample/local.properties
-VPlayerExample/proguard/**
-VPlayerExample/.settings/**
-VPlayerExample/lint.xml
-VPlayerExample/proguard-project.txt
+# Built application files
+build/
+obj/
 
-*~
+# Crashlytics configuations
+com_crashlytics_export_strings.xml
 
+# Local configuration file (sdk path, etc)
+local.properties
 
-.cproject
-.classpath
-.project
-*.tmp
-*.bak
-*.swp
-*.launch
-**/.DS_Store
+# Gradle generated files
+.gradle/
+
+# Signing files
+.signing/
+
+# User-specific configurations
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+*.iml
+
+# OS-specific files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
