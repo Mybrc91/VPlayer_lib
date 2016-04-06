@@ -12,7 +12,7 @@
 	url = git@github.com:libass/libass.git
 [submodule "FFmpegLibrary/jni/fribidi"]
 	path = ffmpeg_build/fribidi
-	url = git@github.com:matthewn4444/fribidi.git
+	url = https://github.com/matthewn4444/fribidi.git
 [submodule "ffmpeg_build/freetype2"]
 	path = ffmpeg_build/freetype2
 	url = git://git.sv.gnu.org/freetype/freetype2.git
@@ -30,4 +30,4 @@
 	url = https://github.com/mstorsjo/fdk-aac.git
 [submodule "VPlayer_library/jni/libyuv"]
 	path = VPlayer_library/jni/libyuv
-	url = https://git.chromium.org/external/libyuv.git
+	url = https://chromium.googlesource.com/external/libyuv
