@@ -9,7 +9,7 @@
 	url = https://github.com/mstorsjo/vo-amrwbenc.git
 [submodule "FFmpegLibrary/jni/libass"]
 	path = ffmpeg_build/libass
-	url = git@github.com:libass/libass.git
+	url = https://github.com/libass/libass.git
 [submodule "FFmpegLibrary/jni/fribidi"]
 	path = ffmpeg_build/fribidi
 	url = https://github.com/matthewn4444/fribidi.git
